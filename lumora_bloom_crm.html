@@ -1,0 +1,2185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lumora Bloom - Luxury Banquet CRM & Operations Suite</title>
+    <!-- SheetJS for Excel Import/Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #ffe9be;
+            --primary-indigo: #1800ad;
+            --indigo-light: #2c12d4;
+            --indigo-dark: #0f0073;
+            --indigo-bg: rgba(24, 0, 173, 0.06);
+            --gold-accent: #c59b27;
+            --gold-light: #fef9e7;
+            --white: #ffffff;
+            --text-main: #1e1b4b;
+            --text-muted: #5b587a;
+            --border-color: #e2d8c5;
+            --card-bg: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 4px 20px rgba(24, 0, 173, 0.08);
+            --shadow-lg: 0 10px 30px rgba(24, 0, 173, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header / Navbar */
+        header {
+            background: var(--white);
+            border-bottom: 3px solid var(--primary-indigo);
+            padding: 0.8rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-img {
+            height: 55px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            color: var(--primary-indigo);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-indigo);
+            color: var(--white);
+            box-shadow: 0 2px 8px rgba(24, 0, 173, 0.25);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--indigo-light);
+            transform: translateY(-1px);
+        }
+
+        .btn-gold {
+            background-color: var(--gold-accent);
+            color: var(--white);
+        }
+
+        .btn-gold:hover {
+            background-color: #b0891f;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-indigo);
+            border: 2px solid var(--primary-indigo);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--indigo-bg);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: var(--white);
+        }
+
+        .btn-sm {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.75rem;
+        }
+
+        .db-badge-connected {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1.5px solid #10b981;
+        }
+
+        .db-badge-offline {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1.5px solid #f59e0b;
+        }
+
+        .alert-badge-btn {
+            position: relative;
+            background: #fff0f0;
+            color: var(--danger);
+            border: 1px solid #ffccd0;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: var(--white);
+            padding: 0 2rem;
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary-indigo);
+            background: var(--indigo-bg);
+        }
+
+        .tab-btn.active {
+            color: var(--primary-indigo);
+            border-bottom-color: var(--primary-indigo);
+            background: var(--indigo-bg);
+        }
+
+        /* Main Container */
+        .main-container {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.25rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary-indigo);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card.gold { border-left-color: var(--gold-accent); }
+        .stat-card.green { border-left-color: var(--success); }
+        .stat-card.red { border-left-color: var(--danger); }
+
+        .stat-info h3 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.35rem;
+        }
+
+        .stat-info .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-indigo);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--indigo-bg);
+            color: var(--primary-indigo);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        /* Grid Layouts */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(24, 0, 173, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--indigo-bg);
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--primary-indigo);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: var(--indigo-bg);
+            color: var(--primary-indigo);
+            font-weight: 600;
+            padding: 0.85rem 1rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--primary-indigo);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 233, 190, 0.25);
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .badge-new { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+        .badge-visit { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .badge-quote { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-booked { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .badge-dead { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            min-height: 550px;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+
+        @media (max-width: 1200px) {
+            .kanban-board { grid-template-columns: repeat(5, minmax(240px, 1fr)); }
+        }
+
+        .kanban-column {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            max-height: 750px;
+        }
+
+        .kanban-header {
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-indigo);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--primary-indigo);
+        }
+
+        .kanban-cards {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-height: 100px;
+        }
+
+        .kanban-card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary-indigo);
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .kanban-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-indigo);
+        }
+
+        .kanban-card h4 {
+            font-size: 0.95rem;
+            color: var(--primary-indigo);
+            margin-bottom: 0.35rem;
+        }
+
+        .kanban-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .kanban-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-indigo);
+        }
+
+        input, select, textarea {
+            padding: 0.75rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            background: var(--white);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-indigo);
+            box-shadow: 0 0 0 3px rgba(24, 0, 173, 0.1);
+        }
+
+        /* Modals / Popups */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 0, 115, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-box {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 650px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+            border: 2px solid var(--primary-indigo);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: var(--primary-indigo);
+            color: var(--white);
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .modal-close:hover { transform: scale(1.2); }
+
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            background: var(--gold-light);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+        }
+
+        /* Tasks & Follow-up Items */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 1rem;
+            background: #fdfaf5;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--warning);
+            border-radius: 8px;
+        }
+
+        .task-item.overdue {
+            border-left-color: var(--danger);
+            background: #fff5f5;
+        }
+
+        .task-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+            border-left-color: var(--success);
+        }
+
+        .task-details h4 {
+            font-size: 0.95rem;
+            color: var(--primary-indigo);
+            margin-bottom: 0.2rem;
+        }
+
+        .task-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Quotation Print Styling */
+        .quote-box {
+            border: 2px solid var(--primary-indigo);
+            padding: 2.5rem;
+            border-radius: 12px;
+            background: var(--white);
+            box-shadow: var(--shadow);
+            margin-top: 1rem;
+        }
+
+        .quote-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-indigo);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quote-table {
+            margin: 1.5rem 0;
+        }
+
+        .quote-table th { background: var(--gold-light); color: var(--primary-indigo); }
+
+        .quote-total-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .quote-total-box {
+            width: 300px;
+            background: var(--indigo-bg);
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid var(--primary-indigo);
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .total-row.grand {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary-indigo);
+            border-top: 2px solid var(--primary-indigo);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Filter bar */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.6);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+        }
+
+        .filter-bar input, .filter-bar select {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media print {
+            header, .nav-tabs, .btn, .filter-bar, .no-print { display: none !important; }
+            body { background: white; }
+            .main-container { padding: 0; }
+            .quote-box { border: none; box-shadow: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-section">
+            <img src="data:image/png;base64,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" alt="Lumora Bloom Logo" class="logo-img">
+            <div>
+                <div class="brand-title">LUMORA BLOOM</div>
+                <div class="brand-subtitle">Banquet Hall & Lawns • Raj Nagar Extension</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button id="db-status-badge" class="btn db-badge-offline" onclick="openDbModal()">
+                <i class="fa-solid fa-database"></i> 🟠 Local Storage Mode
+            </button>
+            <button class="btn alert-badge-btn" onclick="openFollowupModal()">
+                <i class="fa-solid fa-bell"></i> Today's Follow-ups
+                <span class="badge-count" id="header-bell-count">0</span>
+            </button>
+            <button class="btn btn-outline" onclick="openImportModal()">
+                <i class="fa-solid fa-file-excel"></i> Import / Export
+            </button>
+            <button class="btn btn-primary" onclick="openNewLeadModal()">
+                <i class="fa-solid fa-plus"></i> New Lead
+            </button>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('dashboard')">
+            <i class="fa-solid fa-chart-pie"></i> Dashboard & Tasks
+        </button>
+        <button class="tab-btn" onclick="switchTab('leads')">
+            <i class="fa-solid fa-users"></i> 1. All Leads (<span id="tab-count-all">0</span>)
+        </button>
+        <button class="tab-btn" onclick="switchTab('tasks')">
+            <i class="fa-solid fa-list-check"></i> 2. Today's Tasks
+        </button>
+        <button class="tab-btn" onclick="switchTab('pipeline')">
+            <i class="fa-solid fa-kanban"></i> 5. Pipeline
+        </button>
+        <button class="tab-btn" onclick="switchTab('dead')">
+            <i class="fa-solid fa-user-xmark"></i> 6. Dead Leads (<span id="tab-count-dead">0</span>)
+        </button>
+        <button class="tab-btn" onclick="switchTab('quote')">
+            <i class="fa-solid fa-file-invoice-dollar"></i> Quotation Generator
+        </button>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- TAB: DASHBOARD & TASKS -->
+        <div id="tab-dashboard" class="tab-content active">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h3>Total Inquiries</h3>
+                        <div class="value" id="stat-total">0</div>
+                    </div>
+                    <div class="stat-icon"><i class="fa-solid fa-user-group"></i></div>
+                </div>
+                <div class="stat-card gold">
+                    <div class="stat-info">
+                        <h3>Active Pipeline Value</h3>
+                        <div class="value" id="stat-val">₹0</div>
+                    </div>
+                    <div class="stat-icon" style="background: #fef9e7; color: var(--gold-accent);"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-info">
+                        <h3>Booked Events</h3>
+                        <div class="value" id="stat-booked">0</div>
+                    </div>
+                    <div class="stat-icon" style="background: #d1fae5; color: var(--success);"><i class="fa-solid fa-champagne-glasses"></i></div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-info">
+                        <h3>Pending Follow-ups</h3>
+                        <div class="value" id="stat-pending">0</div>
+                    </div>
+                    <div class="stat-icon" style="background: #fee2e2; color: var(--danger);"><i class="fa-solid fa-phone-volume"></i></div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Left: Recent Active Leads -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-star"></i> High-Priority Active Leads</h2>
+                        <button class="btn btn-outline btn-sm" onclick="switchTab('leads')">View All Leads</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Client Name</th>
+                                    <th>Event Details</th>
+                                    <th>Budget</th>
+                                    <th>Status</th>
+                                    <th>Next Follow-up</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-recent-leads">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Right: Today's Quick Tasks & Follow-ups -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fa-solid fa-calendar-day"></i> Today's Tasks & Calls</h2>
+                        <button class="btn btn-primary btn-sm" onclick="openFollowupModal()">Open Pop-up</button>
+                    </div>
+                    <div class="task-list" id="dashboard-task-list">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" id="custom-task-input" placeholder="Add custom task (e.g. Call DJ vendor)..." style="flex: 1; padding: 0.5rem;">
+                            <button class="btn btn-primary btn-sm" onclick="addCustomTask()"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 1: ALL LEADS -->
+        <div id="tab-leads" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fa-solid fa-list-ul"></i> 1. All Banquet Inquiries & Leads</h2>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-outline btn-sm" onclick="openImportModal()"><i class="fa-solid fa-file-excel"></i> Import Excel</button>
+                        <button class="btn btn-primary btn-sm" onclick="openNewLeadModal()"><i class="fa-solid fa-plus"></i> Add New Lead</button>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="filter-bar">
+                    <input type="text" id="filter-search" placeholder="🔍 Search Name, Phone, Remarks..." oninput="renderLeadsTable()" style="width: 250px;">
+                    <select id="filter-status" onchange="renderLeadsTable()">
+                        <option value="ALL">All Statuses</option>
+                        <option value="New Inquiry">New Inquiry</option>
+                        <option value="Site Visit Scheduled">Site Visit Scheduled</option>
+                        <option value="Price Quote Sent">Price Quote Sent / Negotiation</option>
+                        <option value="Booked / Won">Booked / Won</option>
+                        <option value="Dead Lead">Dead Lead</option>
+                    </select>
+                    <select id="filter-event" onchange="renderLeadsTable()">
+                        <option value="ALL">All Event Types</option>
+                        <option value="Wedding">Wedding</option>
+                        <option value="Reception">Reception</option>
+                        <option value="Roka Ceremony">Roka Ceremony</option>
+                        <option value="Engagement">Engagement</option>
+                        <option value="Corporate Conference">Corporate Conference</option>
+                        <option value="Birthday / Anniversary">Birthday / Anniversary</option>
+                    </select>
+                    <button class="btn btn-outline btn-sm" onclick="resetFilters()">Reset Filters</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact Number</th>
+                                <th>Event Type</th>
+                                <th>Event Date</th>
+                                <th>Guests</th>
+                                <th>Budget (₹)</th>
+                                <th>Status</th>
+                                <th>Follow-up Date</th>
+                                <th>Remarks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-leads-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: TODAY'S TASKS -->
+        <div id="tab-tasks" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fa-solid fa-clipboard-check"></i> 2. Today's Dedicated Task Manager</h2>
+                    <button class="btn btn-primary btn-sm" onclick="openNewLeadModal()">+ Add New Lead</button>
+                </div>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                    Here are all pending client follow-up calls scheduled for today or overdue, plus your internal banquet operation tasks.
+                </p>
+                <div class="dashboard-grid">
+                    <div>
+                        <h3 style="color: var(--primary-indigo); margin-bottom: 1rem;"><i class="fa-solid fa-phone"></i> Scheduled Client Calls & Follow-ups</h3>
+                        <div class="task-list" id="dedicated-followup-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--primary-indigo); margin-bottom: 1rem;"><i class="fa-solid fa-list"></i> Banquet Floor & Operational Tasks</h3>
+                        <div class="task-list" id="dedicated-custom-task-list">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <input type="text" id="dedicated-custom-input" placeholder="Add task (e.g., Check AC generator for evening event)..." style="flex: 1; padding: 0.6rem;">
+                            <button class="btn btn-primary" onclick="addCustomTaskFromDedicated()"><i class="fa-solid fa-plus"></i> Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: PIPELINE (KANBAN) -->
+        <div id="tab-pipeline" class="tab-content">
+            <div class="card" style="background: transparent; box-shadow: none; border: none; padding: 0;">
+                <div class="card-header" style="background: var(--white); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 1rem;">
+                    <h2 class="card-title"><i class="fa-solid fa-kanban"></i> 5. Visual Sales Pipeline (Kanban Board)</h2>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">Click "Move ➔" on any card to progress lead status</span>
+                </div>
+
+                <div class="kanban-board">
+                    <!-- Column 1: New Inquiry -->
+                    <div class="kanban-column" style="background: rgba(224, 231, 255, 0.5);">
+                        <div class="kanban-header">
+                            <span>🌟 New Inquiry</span>
+                            <span class="badge badge-new" id="kanban-count-new">0</span>
+                        </div>
+                        <div class="kanban-cards" id="kanban-col-new"></div>
+                    </div>
+
+                    <!-- Column 2: Site Visit -->
+                    <div class="kanban-column" style="background: rgba(254, 243, 199, 0.5);">
+                        <div class="kanban-header">
+                            <span>📅 Site Visit Scheduled</span>
+                            <span class="badge badge-visit" id="kanban-count-visit">0</span>
+                        </div>
+                        <div class="kanban-cards" id="kanban-col-visit"></div>
+                    </div>
+
+                    <!-- Column 3: Quote Sent / Negotiation -->
+                    <div class="kanban-column" style="background: rgba(224, 242, 254, 0.5);">
+                        <div class="kanban-header">
+                            <span>💬 Negotiation / Quote</span>
+                            <span class="badge badge-quote" id="kanban-count-quote">0</span>
+                        </div>
+                        <div class="kanban-cards" id="kanban-col-quote"></div>
+                    </div>
+
+                    <!-- Column 4: Booked / Won -->
+                    <div class="kanban-column" style="background: rgba(209, 250, 229, 0.5);">
+                        <div class="kanban-header">
+                            <span>🎉 Booked / Won</span>
+                            <span class="badge badge-booked" id="kanban-count-booked">0</span>
+                        </div>
+                        <div class="kanban-cards" id="kanban-col-booked"></div>
+                    </div>
+
+                    <!-- Column 5: Dead Lead -->
+                    <div class="kanban-column" style="background: rgba(254, 226, 226, 0.5);">
+                        <div class="kanban-header">
+                            <span>❌ Dead Lead</span>
+                            <span class="badge badge-dead" id="kanban-count-dead">0</span>
+                        </div>
+                        <div class="kanban-cards" id="kanban-col-dead"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: DEAD LEADS -->
+        <div id="tab-dead" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title" style="color: var(--danger);"><i class="fa-solid fa-user-xmark"></i> 6. Dead / Lost Leads Archive</h2>
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">Review lost inquiries to understand pricing friction or date clashes</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact Number</th>
+                                <th>Event Type</th>
+                                <th>Requested Date</th>
+                                <th>Budget (₹)</th>
+                                <th>Reason / Remarks</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dead-leads-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: QUOTATION GENERATOR -->
+        <div id="tab-quote" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fa-solid fa-file-invoice"></i> Lumora Bloom Quotation Generator</h2>
+                    <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
+                </div>
+                
+                <div class="form-grid no-print" style="background: var(--indigo-bg); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
+                    <div class="form-group">
+                        <label>Select Existing Lead (Optional)</label>
+                        <select id="quote-select-lead" onchange="populateQuoteFromLead()">
+                            <option value="">-- Custom Manual Entry --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Client Name</label>
+                        <input type="text" id="quote-client-name" value="Mr. & Mrs. Sharma">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Type</label>
+                        <input type="text" id="quote-event-type" value="Grand Wedding & Reception">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Date</label>
+                        <input type="date" id="quote-event-date" value="2026-11-20">
+                    </div>
+                    <div class="form-group">
+                        <label>Selected Hall / Space</label>
+                        <select id="quote-space" onchange="calculateQuote()">
+                            <option value="Grand Imperial Ballroom + Lush Lawn (Cap: 800 pax)">Grand Imperial Ballroom + Lush Lawn (Cap: 800 pax)</option>
+                            <option value="Grand Ballroom Only (Cap: 400 pax)">Grand Ballroom Only (Cap: 400 pax)</option>
+                            <option value="Rooftop Star Terrace (Cap: 200 pax)">Rooftop Star Terrace (Cap: 200 pax)</option>
+                            <option value="Entire Lumora Bloom Complex (Cap: 1200 pax)">Entire Lumora Bloom Complex (Cap: 1200 pax)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Guest Count</label>
+                        <input type="number" id="quote-guests" value="350" oninput="calculateQuote()">
+                    </div>
+                    <div class="form-group">
+                        <label>Catering Tier / Per Plate Rate (₹)</label>
+                        <select id="quote-package" onchange="calculateQuote()">
+                            <option value="2200">Platinum Imperial Package @ ₹2,200 / plate</option>
+                            <option value="1800" selected>Gold Royal Package @ ₹1,800 / plate</option>
+                            <option value="1400">Silver Blossom Package @ ₹1,400 / plate</option>
+                            <option value="1000">High-Tea / Social Gathering @ ₹1,000 / plate</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Luxury Decor & Floral Setup (₹)</label>
+                        <input type="number" id="quote-decor" value="125000" oninput="calculateQuote()">
+                    </div>
+                    <div class="form-group">
+                        <label>DJ, Stage & Intelligent Lighting (₹)</label>
+                        <input type="number" id="quote-dj" value="35000" oninput="calculateQuote()">
+                    </div>
+                    <div class="form-group">
+                        <label>Special Discount Amount (₹)</label>
+                        <input type="number" id="quote-discount" value="15000" oninput="calculateQuote()">
+                    </div>
+                </div>
+
+                <!-- Printable Quote Box -->
+                <div class="quote-box">
+                    <div class="quote-header">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            <img src="data:image/png;base64,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" alt="Logo" style="height: 70px;">
+                            <div>
+                                <h1 style="font-family: 'Playfair Display', serif; color: var(--primary-indigo); font-size: 1.8rem;">LUMORA BLOOM</h1>
+                                <p style="font-size: 0.85rem; color: var(--gold-accent); font-weight: 700; letter-spacing: 1px;">LUXURY BANQUET HALL & LAWNS</p>
+                                <p style="font-size: 0.8rem; color: var(--text-muted);">Raj Nagar Extension, Ghaziabad, Delhi NCR • Tel: +91 98765 43210</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <h2 style="color: var(--primary-indigo); font-size: 1.4rem;">EVENT QUOTATION</h2>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Date: <span id="quote-print-date">03/07/2026</span></p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Quote Ref: <strong style="color: var(--primary-indigo);">LB-2026-892</strong></p>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.5rem; background: #fdfaf5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Prepared For:</p>
+                            <h3 style="color: var(--primary-indigo); font-size: 1.15rem; margin-top: 0.2rem;" id="print-client-name">Mr. & Mrs. Sharma</h3>
+                            <p style="font-size: 0.9rem;" id="print-event-type">Grand Wedding & Reception</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Event Specification:</p>
+                            <p style="font-size: 0.9rem; margin-top: 0.2rem;"><strong>Date:</strong> <span id="print-event-date">20-Nov-2026</span></p>
+                            <p style="font-size: 0.9rem;"><strong>Venue Space:</strong> <span id="print-space">Grand Imperial Ballroom + Lush Lawn</span></p>
+                            <p style="font-size: 0.9rem;"><strong>Expected Guests:</strong> <span id="print-guests">350</span> Persons</p>
+                        </div>
+                    </div>
+
+                    <table class="quote-table">
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Service Description & Package Details</th>
+                                <th>Rate / Unit</th>
+                                <th>Qty / Pax</th>
+                                <th style="text-align: right;">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>
+                                    <strong>Luxury Banquet Catering Package</strong><br>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Includes Welcome Drinks, 4 Starters, Live Counters, Main Course Buffet, & Assorted Desserts.</span>
+                                </td>
+                                <td id="print-plate-rate">₹1,800</td>
+                                <td id="print-guest-qty">350</td>
+                                <td style="text-align: right;" id="print-food-total">₹6,30,000</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>
+                                    <strong>Royal Theme Floral & Stage Decoration</strong><br>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Custom entrance gate, bridal backdrop, table centerpieces, and seating arrangement.</span>
+                                </td>
+                                <td>Lump Sum</td>
+                                <td>1</td>
+                                <td style="text-align: right;" id="print-decor">₹1,25,000</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>
+                                    <strong>DJ, Intelligent Lighting & Sound Setup</strong><br>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">JBL line array sound system, LED wall backdrop, fog machine, and professional DJ artist.</span>
+                                </td>
+                                <td>Lump Sum</td>
+                                <td>1</td>
+                                <td style="text-align: right;" id="print-dj">₹35,000</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>
+                                    <strong>Bridal Suite & Valet Parking Facility</strong><br>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Complimentary AC bridal dressing room and valet attendants for up to 150 vehicles.</span>
+                                </td>
+                                <td>Complimentary</td>
+                                <td>1</td>
+                                <td style="text-align: right; color: var(--success); font-weight: 600;">FREE</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="quote-total-section">
+                        <div class="quote-total-box">
+                            <div class="total-row">
+                                <span>Subtotal:</span>
+                                <span id="print-subtotal">₹7,90,000</span>
+                            </div>
+                            <div class="total-row">
+                                <span>Special Discount:</span>
+                                <span id="print-discount" style="color: var(--danger);">- ₹15,000</span>
+                            </div>
+                            <div class="total-row">
+                                <span>GST (18%):</span>
+                                <span id="print-gst">₹1,39,500</span>
+                            </div>
+                            <div class="total-row grand">
+                                <span>Grand Total:</span>
+                                <span id="print-grand-total">₹9,14,500</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted);">
+                        <p><strong>Terms & Conditions:</strong></p>
+                        <p>1. 25% token advance required to block and confirm the event date. 50% payable 15 days prior to event. Balance 25% payable on the event date before commencement.</p>
+                        <p>2. Outside catering and fireworks inside the hall are strictly prohibited.</p>
+                        <p>3. This quotation is valid for 10 days from the date of issuance.</p>
+                        <br>
+                        <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
+                            <div>
+                                <p>_______________________________</p>
+                                <p><strong>Client Signature</strong></p>
+                            </div>
+                            <div style="text-align: right;">
+                                <p>_______________________________</p>
+                                <p><strong>For Lumora Bloom Banquet</strong></p>
+                                <p style="font-size: 0.75rem; color: var(--gold-accent);">Authorized Signatory</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL: DATABASE CONNECTION STATUS -->
+    <div id="modal-db" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-database"></i> MongoDB Database Connection</h3>
+                <button class="modal-close" onclick="closeModal('modal-db')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="db-status-banner" style="padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem; font-weight: 600;">
+                    Checking connection...
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-main); margin-bottom: 1rem;">
+                    To connect this dashboard to your **MongoDB Database**, follow these 3 quick steps in your terminal or cloud hosting:
+                </p>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+                    1. Rename <code>.env.example</code> to <code>.env</code> and paste your MongoDB URI.<br><br>
+                    2. Install server packages:<br>
+                    &nbsp;&nbsp;&nbsp;<code>npm install</code><br><br>
+                    3. Start your backend API server:<br>
+                    &nbsp;&nbsp;&nbsp;<code>npm start</code><br><br>
+                    4. Open <a href="http://localhost:5000" target="_blank" style="color: var(--primary-indigo); font-weight: bold;">http://localhost:5000</a> in your browser!
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">The UI will automatically sync with MongoDB when server is live!</span>
+                    <button class="btn btn-primary" onclick="checkMongoConnection(true)"><i class="fa-solid fa-rotate"></i> Test Connection Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT LEAD -->
+    <div id="modal-lead" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modal-lead-title"><i class="fa-solid fa-user-plus"></i> Add New Banquet Inquiry</h3>
+                <button class="modal-close" onclick="closeModal('modal-lead')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="lead-form" class="form-grid" onsubmit="saveLead(event)">
+                    <input type="hidden" id="lead-id">
+                    <div class="form-group">
+                        <label>Client Name *</label>
+                        <input type="text" id="lead-name" required placeholder="e.g. Rahul Sharma">
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number *</label>
+                        <input type="text" id="lead-phone" required placeholder="e.g. +91 98110 98110">
+                    </div>
+                    <div class="form-group">
+                        <label>Event Type *</label>
+                        <select id="lead-event" required>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Reception">Reception</option>
+                            <option value="Roka Ceremony">Roka Ceremony</option>
+                            <option value="Engagement">Engagement</option>
+                            <option value="Corporate Conference">Corporate Conference</option>
+                            <option value="Birthday / Anniversary">Birthday / Anniversary</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Date *</label>
+                        <input type="date" id="lead-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Guest Count</label>
+                        <input type="number" id="lead-guests" placeholder="e.g. 350" value="300">
+                    </div>
+                    <div class="form-group">
+                        <label>Estimated Budget (₹)</label>
+                        <input type="number" id="lead-budget" placeholder="e.g. 500000" value="500000">
+                    </div>
+                    <div class="form-group">
+                        <label>Lead Status *</label>
+                        <select id="lead-status" required>
+                            <option value="New Inquiry">New Inquiry</option>
+                            <option value="Site Visit Scheduled">Site Visit Scheduled</option>
+                            <option value="Price Quote Sent">Price Quote Sent / Negotiation</option>
+                            <option value="Booked / Won">Booked / Won</option>
+                            <option value="Dead Lead">Dead Lead</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Next Follow-up Date *</label>
+                        <input type="date" id="lead-followup" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Remarks / Notes (Requirements, preferred space, reasons for loss)</label>
+                        <textarea id="lead-remarks" rows="3" placeholder="e.g., Prefers Grand Ballroom + Lawn. Wants vegetarian menu with live pasta counter."></textarea>
+                    </div>
+                    <div class="form-group full-width" style="margin-top: 0.5rem;">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;"><i class="fa-solid fa-save"></i> Save Banquet Lead</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: FOLLOW-UP POPUP ALARM -->
+    <div id="modal-followup" class="modal-overlay">
+        <div class="modal-box" style="max-width: 700px; border-color: var(--danger);">
+            <div class="modal-header" style="background: var(--danger);">
+                <h3><i class="fa-solid fa-bell"></i> 4. Follow-up Alarm & Action Pop-up!</h3>
+                <button class="modal-close" onclick="closeModal('modal-followup')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: #fff5f5; padding: 1rem; border-radius: 8px; border: 1px solid #ffccd0; margin-bottom: 1.25rem;">
+                    <strong style="color: var(--danger);"><i class="fa-solid fa-circle-exclamation"></i> Attention Lumora Bloom Sales Team:</strong>
+                    <p style="font-size: 0.9rem; color: var(--text-main); margin-top: 0.25rem;">
+                        The following client follow-ups are scheduled for <strong>Today (03-Jul-2026)</strong> or are <strong>Overdue</strong>! Immediate phone outreach is recommended to lock in dates.
+                    </p>
+                </div>
+                <div id="popup-followup-list" class="task-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('modal-followup')">Close Alert</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EXCEL IMPORT / EXPORT -->
+    <div id="modal-import" class="modal-overlay">
+        <div class="modal-box" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-file-excel"></i> Excel File Import & Export</h3>
+                <button class="modal-close" onclick="closeModal('modal-import')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--primary-indigo); margin-bottom: 0.5rem;">📥 Import Leads from Excel / CSV</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        Select any <code>.xlsx</code> or <code>.csv</code> file with columns matching: Name, Contact Number, Event Type, Event Date, Budget, Remarks.
+                    </p>
+                    <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" style="width: 100%; margin-bottom: 0.75rem;">
+                    <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="importExcelLeads()"><i class="fa-solid fa-upload"></i> Upload & Import File</button>
+                </div>
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+                <div>
+                    <h4 style="color: var(--primary-indigo); margin-bottom: 0.5rem;">📤 Export & Sample Template</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                        Download all current leads to Excel spreadsheet, or download a blank sample template to fill out.
+                    </p>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn btn-gold" style="flex: 1; justify-content: center;" onclick="exportToExcel()"><i class="fa-solid fa-download"></i> Export All Leads</button>
+                        <button class="btn btn-outline" style="flex: 1; justify-content: center;" onclick="downloadSampleTemplate()"><i class="fa-solid fa-file-lines"></i> Sample Template</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Default Sample Data for Lumora Bloom Banquet Hall, Raj Nagar Extension
+        const DEFAULT_LEADS = [
+            {
+                id: '1',
+                name: 'Rahul & Priya Sharma',
+                phone: '+91 98110 45210',
+                event: 'Wedding',
+                date: '2026-11-14',
+                guests: 450,
+                budget: 850000,
+                status: 'Price Quote Sent',
+                followup: '2026-07-03', // TODAY
+                remarks: 'Visited Grand Ballroom yesterday. Loved chandelier & gold theme. Needs 5% discount on live chaat counter.'
+            },
+            {
+                id: '2',
+                name: 'Vikram Singhania (TechCorp)',
+                phone: '+91 99998 12345',
+                event: 'Corporate Conference',
+                date: '2026-08-20',
+                guests: 150,
+                budget: 320000,
+                status: 'Site Visit Scheduled',
+                followup: '2026-07-03', // TODAY
+                remarks: 'Annual tech meet. Requires LED projector screen, stage mic setup, and High-Tea lunch menu.'
+            },
+            {
+                id: '3',
+                name: 'Ananya Verma & Family',
+                phone: '+91 97170 88990',
+                event: 'Roka Ceremony',
+                date: '2026-09-05',
+                guests: 120,
+                budget: 250000,
+                status: 'New Inquiry',
+                followup: '2026-07-04',
+                remarks: 'Inquired via WedMeGood. Wants Rooftop Star Terrace for evening lighting.'
+            },
+            {
+                id: '4',
+                name: 'Rajesh & Suman Gupta',
+                phone: '+91 98101 55667',
+                event: 'Birthday / Anniversary',
+                date: '2026-10-12',
+                guests: 200,
+                budget: 400000,
+                status: 'Booked / Won',
+                followup: '2026-07-15',
+                remarks: '50th Golden Wedding Anniversary! Paid 25% token advance. Gold Royal catering package finalized.'
+            },
+            {
+                id: '5',
+                name: 'Meha & Arjun Kapoor',
+                phone: '+91 98765 00112',
+                event: 'Reception',
+                date: '2026-12-01',
+                guests: 350,
+                budget: 600000,
+                status: 'Dead Lead',
+                followup: '2026-06-28',
+                remarks: 'Dead Lead Reason: Date 1st Dec was already booked for another auspicious saya date.'
+            },
+            {
+                id: '6',
+                name: 'Siddharth Malhotra',
+                phone: '+91 98188 77665',
+                event: 'Engagement',
+                date: '2026-10-25',
+                guests: 250,
+                budget: 550000,
+                status: 'Site Visit Scheduled',
+                followup: '2026-07-03', // TODAY
+                remarks: 'Wants Lush Lawn + Ballroom combo. Client arriving for food tasting at 5 PM today.'
+            }
+        ];
+
+        const DEFAULT_TASKS = [
+            { id: 't1', text: 'Call Sharma Ji regarding 5% chaat counter discount approval', completed: false },
+            { id: 't2', text: 'Confirm AC Generator & Valet attendants for Sunday evening function', completed: true },
+            { id: 't3', text: 'Send updated Gold Royal Menu PDF to Vikram Singhania', completed: false }
+        ];
+
+        let leads = [];
+        let customTasks = [];
+        const TODAY_STR = '2026-07-03';
+        let isMongoConnected = false;
+        let activeApiUrl = '/api/leads';
+
+        // Initialize App
+        window.onload = async function() {
+            const savedTasks = localStorage.getItem('lumora_tasks');
+            if (savedTasks) {
+                customTasks = JSON.parse(savedTasks);
+            } else {
+                customTasks = [...DEFAULT_TASKS];
+                localStorage.setItem('lumora_tasks', JSON.stringify(customTasks));
+            }
+
+            // Check MongoDB Connection
+            await checkMongoConnection();
+
+            if (!isMongoConnected) {
+                const savedLeads = localStorage.getItem('lumora_leads');
+                if (savedLeads) {
+                    leads = JSON.parse(savedLeads);
+                } else {
+                    leads = [...DEFAULT_LEADS];
+                    localStorage.setItem('lumora_leads', JSON.stringify(leads));
+                }
+            }
+
+            updateAllViews();
+            populateQuoteSelect();
+            calculateQuote();
+
+            // Trigger Pop-up if there are follow-ups today!
+            setTimeout(() => {
+                const todayCalls = getTodayFollowups();
+                if (todayCalls.length > 0) {
+                    openFollowupModal();
+                }
+            }, 600);
+        };
+
+        async function checkMongoConnection(showAlert = false) {
+            const banner = document.getElementById('db-status-banner');
+            try {
+                // Try relative path first (when served via express)
+                let res = await fetch('/api/leads').catch(() => null);
+                if (res && res.ok) {
+                    activeApiUrl = '/api/leads';
+                    isMongoConnected = true;
+                } else {
+                    // Try localhost:5000 if opened directly
+                    res = await fetch('http://localhost:5000/api/leads').catch(() => null);
+                    if (res && res.ok) {
+                        activeApiUrl = 'http://localhost:5000/api/leads';
+                        isMongoConnected = true;
+                    } else {
+                        isMongoConnected = false;
+                    }
+                }
+
+                if (isMongoConnected) {
+                    const data = await res.json();
+                    if (data && data.success) {
+                        leads = data.data.map(l => ({
+                            id: l._id || l.id,
+                            name: l.name,
+                            phone: l.phone,
+                            event: l.event,
+                            date: l.date,
+                            guests: l.guests,
+                            budget: l.budget,
+                            status: l.status,
+                            followup: l.followup,
+                            remarks: l.remarks
+                        }));
+                    }
+                    document.getElementById('db-status-badge').innerHTML = '<i class="fa-solid fa-database"></i> 🟢 MongoDB Connected';
+                    document.getElementById('db-status-badge').className = 'btn db-badge-connected';
+                    if (banner) {
+                        banner.style.background = '#d1fae5';
+                        banner.style.color = '#065f46';
+                        banner.innerHTML = '✅ Successfully Connected to Live MongoDB Database!';
+                    }
+                    if (showAlert) alert('🟢 MongoDB Connection Successful! Loaded leads directly from database.');
+                    updateAllViews();
+                    return true;
+                }
+            } catch (err) {
+                isMongoConnected = false;
+            }
+
+            isMongoConnected = false;
+            document.getElementById('db-status-badge').innerHTML = '<i class="fa-solid fa-database"></i> 🟠 Local Storage Mode';
+            document.getElementById('db-status-badge').className = 'btn db-badge-offline';
+            if (banner) {
+                banner.style.background = '#fef3c7';
+                banner.style.color = '#92400e';
+                banner.innerHTML = '🟠 Offline Demo Mode — Running on Local Storage. Connect backend to enable MongoDB!';
+            }
+            if (showAlert) alert('🟠 Could not connect to MongoDB API. Please make sure you ran `npm start` on port 5000!');
+            return false;
+        }
+
+        function saveToStorage() {
+            if (!isMongoConnected) {
+                localStorage.setItem('lumora_leads', JSON.stringify(leads));
+            }
+            localStorage.setItem('lumora_tasks', JSON.stringify(customTasks));
+            updateAllViews();
+            populateQuoteSelect();
+        }
+
+        function getTodayFollowups() {
+            return leads.filter(l => l.status !== 'Dead Lead' && l.status !== 'Booked / Won' && l.followup <= TODAY_STR);
+        }
+
+        function updateAllViews() {
+            renderDashboard();
+            renderLeadsTable();
+            renderKanban();
+            renderDeadLeads();
+            renderTasks();
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').innerText = leads.length;
+            
+            const activeLeads = leads.filter(l => l.status !== 'Dead Lead');
+            const totalVal = activeLeads.reduce((sum, l) => sum + (Number(l.budget) || 0), 0);
+            document.getElementById('stat-val').innerText = '₹' + totalVal.toLocaleString('en-IN');
+
+            const booked = leads.filter(l => l.status === 'Booked / Won').length;
+            document.getElementById('stat-booked').innerText = booked;
+
+            const pendingCalls = getTodayFollowups();
+            document.getElementById('stat-pending').innerText = pendingCalls.length;
+            document.getElementById('header-bell-count').innerText = pendingCalls.length;
+
+            document.getElementById('tab-count-all').innerText = leads.length;
+            document.getElementById('tab-count-dead').innerText = leads.filter(l => l.status === 'Dead Lead').length;
+        }
+
+        /* Tab Navigation */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+            document.getElementById('tab-' + tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        /* Render Dashboard */
+        function renderDashboard() {
+            const tbody = document.getElementById('dashboard-recent-leads');
+            tbody.innerHTML = '';
+
+            const active = leads.filter(l => l.status !== 'Dead Lead' && l.status !== 'Booked / Won').slice(0, 5);
+            
+            if (active.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No active pipeline leads found. Add a new inquiry!</td></tr>';
+                return;
+            }
+
+            active.forEach(l => {
+                const badgeClass = getBadgeClass(l.status);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${l.name}</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">${l.phone}</span></td>
+                    <td><span style="color: var(--primary-indigo); font-weight: 600;">${l.event}</span><br><span style="font-size: 0.8rem; color: var(--text-muted);">Date: ${l.date} (${l.guests} pax)</span></td>
+                    <td><strong>₹${Number(l.budget).toLocaleString('en-IN')}</strong></td>
+                    <td><span class="badge ${badgeClass}">${l.status}</span></td>
+                    <td><strong style="${l.followup <= TODAY_STR ? 'color: var(--danger);' : ''}">${l.followup === TODAY_STR ? 'TODAY 🔴' : l.followup}</strong></td>
+                    <td>
+                        <button class="btn btn-outline btn-sm" onclick="editLead('${l.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-primary btn-sm" onclick="quoteLead('${l.id}')"><i class="fa-solid fa-file-invoice"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* Render Tasks & Followups */
+        function renderTasks() {
+            const dashList = document.getElementById('dashboard-task-list');
+            const dedList = document.getElementById('dedicated-followup-list');
+            const dedCustom = document.getElementById('dedicated-custom-task-list');
+            const popupList = document.getElementById('popup-followup-list');
+
+            dashList.innerHTML = '';
+            dedList.innerHTML = '';
+            dedCustom.innerHTML = '';
+            popupList.innerHTML = '';
+
+            const todayCalls = getTodayFollowups();
+
+            if (todayCalls.length === 0) {
+                dashList.innerHTML = '<p style="color: var(--success); font-size: 0.9rem;">✅ All client follow-up calls are caught up!</p>';
+                dedList.innerHTML = '<p style="color: var(--success); font-size: 0.9rem;">✅ All client follow-up calls are caught up!</p>';
+                popupList.innerHTML = '<p style="color: var(--success); font-size: 0.95rem;">🎉 Excellent! There are no overdue client follow-up calls pending for today.</p>';
+            } else {
+                todayCalls.forEach(l => {
+                    const html = `
+                        <div class="task-item overdue">
+                            <div class="task-details">
+                                <h4><i class="fa-solid fa-phone"></i> Call: ${l.name} (${l.phone})</h4>
+                                <p><strong>Event:</strong> ${l.event} on ${l.date} • <strong>Status:</strong> ${l.status}</p>
+                                <p style="margin-top: 0.2rem; font-style: italic;">"${l.remarks}"</p>
+                            </div>
+                            <div style="display: flex; gap: 0.4rem; flex-direction: column;">
+                                <a href="tel:${l.phone}" class="btn btn-primary btn-sm" style="text-align: center;"><i class="fa-solid fa-phone"></i> Call</a>
+                                <button class="btn btn-outline btn-sm" onclick="editLead('${l.id}')">Update Status</button>
+                            </div>
+                        </div>
+                    `;
+                    dashList.innerHTML += html;
+                    dedList.innerHTML += html;
+                    popupList.innerHTML += html;
+                });
+            }
+
+            // Render Custom Tasks
+            customTasks.forEach(t => {
+                const html = `
+                    <div class="task-item ${t.completed ? 'completed' : ''}">
+                        <div class="task-details" style="cursor: pointer;" onclick="toggleTask('${t.id}')">
+                            <h4><i class="fa-solid ${t.completed ? 'fa-check-square' : 'fa-square'}"></i> ${t.text}</h4>
+                        </div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteTask('${t.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                dashList.innerHTML += html;
+                dedCustom.innerHTML += html;
+            });
+        }
+
+        function addCustomTask() {
+            const input = document.getElementById('custom-task-input');
+            if (!input.value.trim()) return;
+            customTasks.push({ id: 't_' + Date.now(), text: input.value.trim(), completed: false });
+            input.value = '';
+            saveToStorage();
+        }
+
+        function addCustomTaskFromDedicated() {
+            const input = document.getElementById('dedicated-custom-input');
+            if (!input.value.trim()) return;
+            customTasks.push({ id: 't_' + Date.now(), text: input.value.trim(), completed: false });
+            input.value = '';
+            saveToStorage();
+        }
+
+        function toggleTask(id) {
+            const t = customTasks.find(x => x.id === id);
+            if (t) {
+                t.completed = !t.completed;
+                saveToStorage();
+            }
+        }
+
+        function deleteTask(id) {
+            customTasks = customTasks.filter(x => x.id !== id);
+            saveToStorage();
+        }
+
+        /* Render All Leads Table */
+        function renderLeadsTable() {
+            const tbody = document.getElementById('all-leads-table-body');
+            tbody.innerHTML = '';
+
+            const search = document.getElementById('filter-search').value.toLowerCase();
+            const statusFilter = document.getElementById('filter-status').value;
+            const eventFilter = document.getElementById('filter-event').value;
+
+            const filtered = leads.filter(l => {
+                const matchSearch = l.name.toLowerCase().includes(search) || l.phone.includes(search) || (l.remarks && l.remarks.toLowerCase().includes(search));
+                const matchStatus = statusFilter === 'ALL' || l.status === statusFilter;
+                const matchEvent = eventFilter === 'ALL' || l.event === eventFilter;
+                return matchSearch && matchStatus && matchEvent;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" style="text-align: center; color: var(--text-muted); padding: 2rem;">No matching inquiries found. Try resetting filters or adding a new lead!</td></tr>';
+                return;
+            }
+
+            filtered.forEach(l => {
+                const badgeClass = getBadgeClass(l.status);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${l.name}</strong></td>
+                    <td><a href="tel:${l.phone}" style="color: var(--primary-indigo); font-weight: 600; text-decoration: none;"><i class="fa-solid fa-phone"></i> ${l.phone}</a></td>
+                    <td>${l.event}</td>
+                    <td><strong>${l.date}</strong></td>
+                    <td>${l.guests} pax</td>
+                    <td>₹${Number(l.budget).toLocaleString('en-IN')}</td>
+                    <td><span class="badge ${badgeClass}">${l.status}</span></td>
+                    <td style="${l.followup <= TODAY_STR ? 'color: var(--danger); font-weight: 700;' : ''}">${l.followup === TODAY_STR ? 'TODAY 🔴' : l.followup}</td>
+                    <td style="max-width: 200px; font-size: 0.8rem; color: var(--text-muted);">${l.remarks || '-'}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.35rem;">
+                            <button class="btn btn-outline btn-sm" title="Edit Lead" onclick="editLead('${l.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-primary btn-sm" title="Generate Quotation" onclick="quoteLead('${l.id}')"><i class="fa-solid fa-file-invoice-dollar"></i></button>
+                            <button class="btn btn-danger btn-sm" title="Delete Lead" onclick="deleteLead('${l.id}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-search').value = '';
+            document.getElementById('filter-status').value = 'ALL';
+            document.getElementById('filter-event').value = 'ALL';
+            renderLeadsTable();
+        }
+
+        /* Render Kanban Pipeline */
+        function renderKanban() {
+            const cols = {
+                'New Inquiry': document.getElementById('kanban-col-new'),
+                'Site Visit Scheduled': document.getElementById('kanban-col-visit'),
+                'Price Quote Sent': document.getElementById('kanban-col-quote'),
+                'Booked / Won': document.getElementById('kanban-col-booked'),
+                'Dead Lead': document.getElementById('kanban-col-dead')
+            };
+
+            const counts = {
+                'New Inquiry': 0,
+                'Site Visit Scheduled': 0,
+                'Price Quote Sent': 0,
+                'Booked / Won': 0,
+                'Dead Lead': 0
+            };
+
+            Object.values(cols).forEach(c => c.innerHTML = '');
+
+            leads.forEach(l => {
+                const col = cols[l.status] || cols['New Inquiry'];
+                counts[l.status] = (counts[l.status] || 0) + 1;
+
+                const card = document.createElement('div');
+                card.className = 'kanban-card';
+                card.innerHTML = `
+                    <h4>${l.name}</h4>
+                    <div class="kanban-meta">
+                        <span><i class="fa-solid fa-phone"></i> ${l.phone}</span>
+                        <span><i class="fa-solid fa-calendar"></i> Event: ${l.event} (${l.date})</span>
+                        <span><i class="fa-solid fa-users"></i> Guests: ${l.guests} pax</span>
+                        <span><i class="fa-solid fa-indian-rupee-sign"></i> Budget: ₹${Number(l.budget).toLocaleString('en-IN')}</span>
+                    </div>
+                    ${l.remarks ? `<p style="font-size: 0.75rem; color: var(--text-muted); background: #f8f9fa; padding: 0.4rem; border-radius: 4px; margin-top: 0.4rem;">"${l.remarks}"</p>` : ''}
+                    <div class="kanban-actions">
+                        <button class="btn btn-outline btn-sm" onclick="editLead('${l.id}')">Edit</button>
+                        ${getNextStageButton(l)}
+                    </div>
+                `;
+                col.appendChild(card);
+            });
+
+            document.getElementById('kanban-count-new').innerText = counts['New Inquiry'];
+            document.getElementById('kanban-count-visit').innerText = counts['Site Visit Scheduled'];
+            document.getElementById('kanban-count-quote').innerText = counts['Price Quote Sent'];
+            document.getElementById('kanban-count-booked').innerText = counts['Booked / Won'];
+            document.getElementById('kanban-count-dead').innerText = counts['Dead Lead'];
+        }
+
+        function getNextStageButton(l) {
+            if (l.status === 'New Inquiry') return `<button class="btn btn-primary btn-sm" onclick="advanceStage('${l.id}', 'Site Visit Scheduled')">Visit ➔</button>`;
+            if (l.status === 'Site Visit Scheduled') return `<button class="btn btn-primary btn-sm" onclick="advanceStage('${l.id}', 'Price Quote Sent')">Quote ➔</button>`;
+            if (l.status === 'Price Quote Sent') return `<button class="btn btn-gold btn-sm" onclick="advanceStage('${l.id}', 'Booked / Won')">Book 🎉</button>`;
+            if (l.status === 'Dead Lead') return `<button class="btn btn-outline btn-sm" onclick="advanceStage('${l.id}', 'New Inquiry')">Re-open 🔄</button>`;
+            return `<span style="font-size: 0.75rem; color: var(--success); font-weight: bold;">Confirmed ✅</span>`;
+        }
+
+        async function advanceStage(id, newStatus) {
+            const l = leads.find(x => x.id === id);
+            if (!l) return;
+            l.status = newStatus;
+
+            if (isMongoConnected) {
+                try {
+                    await fetch(`${activeApiUrl}/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                } catch (err) {
+                    console.error('Failed to sync stage advance with MongoDB', err);
+                }
+            }
+            saveToStorage();
+        }
+
+        /* Render Dead Leads */
+        function renderDeadLeads() {
+            const tbody = document.getElementById('dead-leads-table-body');
+            tbody.innerHTML = '';
+
+            const dead = leads.filter(l => l.status === 'Dead Lead');
+            if (dead.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 2rem;">No dead leads archived. Great conversion!</td></tr>';
+                return;
+            }
+
+            dead.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${l.name}</strong></td>
+                    <td>${l.phone}</td>
+                    <td>${l.event}</td>
+                    <td>${l.date}</td>
+                    <td>₹${Number(l.budget).toLocaleString('en-IN')}</td>
+                    <td style="color: var(--danger); font-weight: 500;">${l.remarks || 'No reason specified'}</td>
+                    <td>
+                        <button class="btn btn-outline btn-sm" onclick="advanceStage('${l.id}', 'New Inquiry')"><i class="fa-solid fa-rotate-left"></i> Re-open Lead</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getBadgeClass(status) {
+            if (status === 'New Inquiry') return 'badge-new';
+            if (status === 'Site Visit Scheduled') return 'badge-visit';
+            if (status === 'Price Quote Sent') return 'badge-quote';
+            if (status === 'Booked / Won') return 'badge-booked';
+            if (status === 'Dead Lead') return 'badge-dead';
+            return 'badge-new';
+        }
+
+        /* Modals & Form Actions */
+        function openNewLeadModal() {
+            document.getElementById('lead-form').reset();
+            document.getElementById('lead-id').value = '';
+            document.getElementById('modal-lead-title').innerHTML = '<i class="fa-solid fa-user-plus"></i> Add New Banquet Inquiry';
+            document.getElementById('lead-followup').value = TODAY_STR;
+            document.getElementById('modal-lead').classList.add('active');
+        }
+
+        function editLead(id) {
+            const l = leads.find(x => x.id === id);
+            if (!l) return;
+            document.getElementById('lead-id').value = l.id;
+            document.getElementById('lead-name').value = l.name;
+            document.getElementById('lead-phone').value = l.phone;
+            document.getElementById('lead-event').value = l.event;
+            document.getElementById('lead-date').value = l.date;
+            document.getElementById('lead-guests').value = l.guests;
+            document.getElementById('lead-budget').value = l.budget;
+            document.getElementById('lead-status').value = l.status;
+            document.getElementById('lead-followup').value = l.followup;
+            document.getElementById('lead-remarks').value = l.remarks || '';
+            
+            document.getElementById('modal-lead-title').innerHTML = '<i class="fa-solid fa-user-pen"></i> Edit Banquet Lead';
+            document.getElementById('modal-lead').classList.add('active');
+        }
+
+        async function saveLead(e) {
+            e.preventDefault();
+            const id = document.getElementById('lead-id').value;
+            const newLead = {
+                name: document.getElementById('lead-name').value.trim(),
+                phone: document.getElementById('lead-phone').value.trim(),
+                event: document.getElementById('lead-event').value,
+                date: document.getElementById('lead-date').value,
+                guests: parseInt(document.getElementById('lead-guests').value) || 300,
+                budget: parseInt(document.getElementById('lead-budget').value) || 500000,
+                status: document.getElementById('lead-status').value,
+                followup: document.getElementById('lead-followup').value,
+                remarks: document.getElementById('lead-remarks').value.trim()
+            };
+
+            if (isMongoConnected) {
+                try {
+                    if (id) {
+                        const res = await fetch(`${activeApiUrl}/${id}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(newLead)
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            const idx = leads.findIndex(x => x.id === id);
+                            if (idx !== -1) leads[idx] = { id: data.data._id, ...newLead };
+                        }
+                    } else {
+                        const res = await fetch(activeApiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(newLead)
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            leads.unshift({ id: data.data._id, ...newLead });
+                        }
+                    }
+                } catch (err) {
+                    alert('Error saving to MongoDB: ' + err.message);
+                }
+            } else {
+                if (id) {
+                    const idx = leads.findIndex(x => x.id === id);
+                    if (idx !== -1) leads[idx] = { id, ...newLead };
+                } else {
+                    leads.unshift({ id: 'l_' + Date.now(), ...newLead });
+                }
+            }
+
+            closeModal('modal-lead');
+            saveToStorage();
+        }
+
+        async function deleteLead(id) {
+            if (confirm('Are you sure you want to delete this inquiry from Lumora Bloom CRM?')) {
+                if (isMongoConnected) {
+                    try {
+                        await fetch(`${activeApiUrl}/${id}`, { method: 'DELETE' });
+                    } catch (err) {
+                        console.error('Error deleting from MongoDB', err);
+                    }
+                }
+                leads = leads.filter(x => x.id !== id);
+                saveToStorage();
+            }
+        }
+
+        function openFollowupModal() {
+            document.getElementById('modal-followup').classList.add('active');
+        }
+
+        function openImportModal() {
+            document.getElementById('modal-import').classList.add('active');
+        }
+
+        function openDbModal() {
+            checkMongoConnection(false);
+            document.getElementById('modal-db').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        /* Quotation Generator Logic */
+        function populateQuoteSelect() {
+            const sel = document.getElementById('quote-select-lead');
+            sel.innerHTML = '<option value="">-- Select Existing Lead to Auto-Fill --</option>';
+            leads.forEach(l => {
+                sel.innerHTML += `<option value="${l.id}">${l.name} (${l.event} - ${l.guests} pax)</option>`;
+            });
+        }
+
+        function populateQuoteFromLead() {
+            const id = document.getElementById('quote-select-lead').value;
+            const l = leads.find(x => x.id === id);
+            if (l) {
+                document.getElementById('quote-client-name').value = l.name;
+                document.getElementById('quote-event-type').value = l.event;
+                document.getElementById('quote-event-date').value = l.date;
+                document.getElementById('quote-guests').value = l.guests;
+                calculateQuote();
+            }
+        }
+
+        function quoteLead(id) {
+            switchTab('quote');
+            document.getElementById('quote-select-lead').value = id;
+            populateQuoteFromLead();
+        }
+
+        function calculateQuote() {
+            const client = document.getElementById('quote-client-name').value;
+            const eventType = document.getElementById('quote-event-type').value;
+            const eventDate = document.getElementById('quote-event-date').value;
+            const space = document.getElementById('quote-space').value;
+            const guests = parseInt(document.getElementById('quote-guests').value) || 0;
+            const plateRate = parseInt(document.getElementById('quote-package').value) || 0;
+            const decor = parseInt(document.getElementById('quote-decor').value) || 0;
+            const dj = parseInt(document.getElementById('quote-dj').value) || 0;
+            const discount = parseInt(document.getElementById('quote-discount').value) || 0;
+
+            const foodTotal = guests * plateRate;
+            const subtotal = foodTotal + decor + dj;
+            const discountedSub = Math.max(0, subtotal - discount);
+            const gst = Math.round(discountedSub * 0.18);
+            const grandTotal = discountedSub + gst;
+
+            // Update Printable View
+            document.getElementById('print-client-name').innerText = client;
+            document.getElementById('print-event-type').innerText = eventType;
+            document.getElementById('print-event-date').innerText = eventDate;
+            document.getElementById('print-space').innerText = space;
+            document.getElementById('print-guests').innerText = guests;
+
+            document.getElementById('print-plate-rate').innerText = '₹' + plateRate.toLocaleString('en-IN');
+            document.getElementById('print-guest-qty').innerText = guests;
+            document.getElementById('print-food-total').innerText = '₹' + foodTotal.toLocaleString('en-IN');
+
+            document.getElementById('print-decor').innerText = '₹' + decor.toLocaleString('en-IN');
+            document.getElementById('print-dj').innerText = '₹' + dj.toLocaleString('en-IN');
+
+            document.getElementById('print-subtotal').innerText = '₹' + subtotal.toLocaleString('en-IN');
+            document.getElementById('print-discount').innerText = '- ₹' + discount.toLocaleString('en-IN');
+            document.getElementById('print-gst').innerText = '₹' + gst.toLocaleString('en-IN');
+            document.getElementById('print-grand-total').innerText = '₹' + grandTotal.toLocaleString('en-IN');
+        }
+
+        /* Excel / CSV Import & Export */
+        async function importExcelLeads() {
+            const fileInput = document.getElementById('excel-file-input');
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert('Please select an Excel (.xlsx) or CSV file first.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+
+            if (isMongoConnected) {
+                const formData = new FormData();
+                formData.append('file', file);
+                try {
+                    const res = await fetch('/api/leads/import', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert(`✅ Successfully imported ${data.data.length} banquet leads directly into MongoDB!`);
+                        await checkMongoConnection();
+                        closeModal('modal-import');
+                        return;
+                    } else {
+                        alert('Error importing to MongoDB: ' + data.error);
+                    }
+                } catch (err) {
+                    console.error('Server import failed, falling back to client import', err);
+                }
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(firstSheet);
+
+                    if (rows.length === 0) {
+                        alert('No rows found in the uploaded file!');
+                        return;
+                    }
+
+                    let count = 0;
+                    rows.forEach(r => {
+                        const name = r['Name'] || r['Client Name'] || r['name'];
+                        const phone = r['Contact Number'] || r['Phone'] || r['Contact'] || r['phone'];
+                        if (name && phone) {
+                            leads.unshift({
+                                id: 'l_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                                name: String(name),
+                                phone: String(phone),
+                                event: r['Event Type'] || r['Event'] || 'Wedding',
+                                date: r['Event Date'] || r['Date'] || '2026-11-25',
+                                guests: parseInt(r['Guests'] || r['Guest Count']) || 300,
+                                budget: parseInt(r['Budget'] || r['Estimated Budget']) || 500000,
+                                status: r['Status'] || 'New Inquiry',
+                                followup: r['Follow-up Date'] || r['Followup'] || TODAY_STR,
+                                remarks: r['Remarks'] || r['Notes'] || 'Imported via Excel'
+                            });
+                            count++;
+                        }
+                    });
+
+                    saveToStorage();
+                    closeModal('modal-import');
+                    alert(`✅ Successfully imported ${count} banquet leads into Lumora Bloom CRM!`);
+                } catch (err) {
+                    alert('Error reading Excel file. Make sure columns match: Name, Contact Number, Event Type, Event Date, Budget, Remarks.');
+                    console.error(err);
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function exportToExcel() {
+            const exportData = leads.map(l => ({
+                'Name': l.name,
+                'Contact Number': l.phone,
+                'Event Type': l.event,
+                'Event Date': l.date,
+                'Guest Count': l.guests,
+                'Estimated Budget (INR)': l.budget,
+                'Lead Status': l.status,
+                'Next Follow-up Date': l.followup,
+                'Remarks / Notes': l.remarks
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Lumora Bloom Leads");
+            XLSX.writeFile(wb, "Lumora_Bloom_Banquet_Leads.xlsx");
+        }
+
+        function downloadSampleTemplate() {
+            const sampleData = [
+                {
+                    'Name': 'Amit & Neha Verma',
+                    'Contact Number': '+91 98111 22334',
+                    'Event Type': 'Wedding',
+                    'Event Date': '2026-11-28',
+                    'Guests': 500,
+                    'Budget': 950000,
+                    'Status': 'New Inquiry',
+                    'Follow-up Date': '2026-07-05',
+                    'Remarks': 'Wants grand ballroom decoration with live pasta counter.'
+                },
+                {
+                    'Name': 'Suresh Jindal',
+                    'Contact Number': '+91 98100 44556',
+                    'Event Type': 'Reception',
+                    'Event Date': '2026-12-10',
+                    'Guests': 350,
+                    'Budget': 650000,
+                    'Status': 'Site Visit Scheduled',
+                    'Follow-up Date': '2026-07-04',
+                    'Remarks': 'Inquired via Google Maps. Prefers evening lawn setup.'
+                }
+            ];
+            const ws = XLSX.utils.json_to_sheet(sampleData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Sample Leads");
+            XLSX.writeFile(wb, "Lumora_Bloom_Leads_Template.xlsx");
+        }
+    </script>
+</body>
+</html>
