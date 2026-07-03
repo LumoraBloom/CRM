@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lumora Bloom - Luxury Banquet CRM & Operations Suite</title>
+    <!-- PWA & Mobile Home Screen Icon Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1800ad">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Lumora CRM">
+
     <!-- SheetJS for Excel Import/Export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- FontAwesome for Icons -->
@@ -67,7 +74,7 @@
         }
 
         .logo-img {
-            height: 55px;
+            height: 85px;
             width: auto;
             object-fit: contain;
         }
@@ -705,6 +712,7 @@
             .quote-box { border: none; box-shadow: none; padding: 0; }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body>
 
@@ -718,6 +726,7 @@
             </div>
         </div>
         <div class="header-actions">
+            <button class="btn btn-gold" onclick="openQrModal()"><i class="fa-solid fa-qrcode"></i> 📱 Mobile QR Access</button>
             <button id="db-status-badge" class="btn db-badge-offline" onclick="openDbModal()">
                 <i class="fa-solid fa-database"></i> 🟠 Local Storage Mode
             </button>
@@ -740,16 +749,16 @@
             <i class="fa-solid fa-chart-pie"></i> Dashboard & Tasks
         </button>
         <button class="tab-btn" onclick="switchTab('leads')">
-            <i class="fa-solid fa-users"></i> 1. All Leads (<span id="tab-count-all">0</span>)
+            <i class="fa-solid fa-users"></i> All Leads (<span id="tab-count-all">0</span>)
         </button>
         <button class="tab-btn" onclick="switchTab('tasks')">
-            <i class="fa-solid fa-list-check"></i> 2. Today's Tasks
+            <i class="fa-solid fa-list-check"></i> Today's Tasks
         </button>
         <button class="tab-btn" onclick="switchTab('pipeline')">
-            <i class="fa-solid fa-kanban"></i> 5. Pipeline
+            <i class="fa-solid fa-kanban"></i> Pipeline
         </button>
         <button class="tab-btn" onclick="switchTab('dead')">
-            <i class="fa-solid fa-user-xmark"></i> 6. Dead Leads (<span id="tab-count-dead">0</span>)
+            <i class="fa-solid fa-user-xmark"></i> Dead Leads (<span id="tab-count-dead">0</span>)
         </button>
         <button class="tab-btn" onclick="switchTab('quote')">
             <i class="fa-solid fa-file-invoice-dollar"></i> Quotation Generator
@@ -772,7 +781,7 @@
                 </div>
                 <div class="stat-card gold">
                     <div class="stat-info">
-                        <h3>Active Pipeline Value</h3>
+                        <h3>Hot Enquiries</h3>
                         <div class="value" id="stat-val">₹0</div>
                     </div>
                     <div class="stat-icon" style="background: #fef9e7; color: var(--gold-accent);"><i class="fa-solid fa-indian-rupee-sign"></i></div>
@@ -843,7 +852,7 @@
         <div id="tab-leads" class="tab-content">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title"><i class="fa-solid fa-list-ul"></i> 1. All Banquet Inquiries & Leads</h2>
+                    <h2 class="card-title"><i class="fa-solid fa-list-ul"></i> All Banquet Inquiries & Leads</h2>
                     <div style="display: flex; gap: 0.75rem;">
                         <button class="btn btn-outline btn-sm" onclick="openImportModal()"><i class="fa-solid fa-file-excel"></i> Import Excel</button>
                         <button class="btn btn-primary btn-sm" onclick="openNewLeadModal()"><i class="fa-solid fa-plus"></i> Add New Lead</button>
@@ -901,7 +910,7 @@
         <div id="tab-tasks" class="tab-content">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title"><i class="fa-solid fa-clipboard-check"></i> 2. Today's Dedicated Task Manager</h2>
+                    <h2 class="card-title"><i class="fa-solid fa-clipboard-check"></i> Today's Dedicated Task Manager</h2>
                     <button class="btn btn-primary btn-sm" onclick="openNewLeadModal()">+ Add New Lead</button>
                 </div>
                 <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
@@ -932,7 +941,7 @@
         <div id="tab-pipeline" class="tab-content">
             <div class="card" style="background: transparent; box-shadow: none; border: none; padding: 0;">
                 <div class="card-header" style="background: var(--white); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: var(--shadow); margin-bottom: 1rem;">
-                    <h2 class="card-title"><i class="fa-solid fa-kanban"></i> 5. Visual Sales Pipeline (Kanban Board)</h2>
+                    <h2 class="card-title"><i class="fa-solid fa-kanban"></i> Visual Sales Pipeline (Kanban Board)</h2>
                     <span style="font-size: 0.85rem; color: var(--text-muted);">Click "Move ➔" on any card to progress lead status</span>
                 </div>
 
@@ -989,7 +998,7 @@
         <div id="tab-dead" class="tab-content">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title" style="color: var(--danger);"><i class="fa-solid fa-user-xmark"></i> 6. Dead / Lost Leads Archive</h2>
+                    <h2 class="card-title" style="color: var(--danger);"><i class="fa-solid fa-user-xmark"></i> Dead / Lost Leads Archive</h2>
                     <span style="color: var(--text-muted); font-size: 0.85rem;">Review lost inquiries to understand pricing friction or date clashes</span>
                 </div>
                 <div class="table-responsive">
@@ -1018,7 +1027,10 @@
             <div class="card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fa-solid fa-file-invoice"></i> Lumora Bloom Quotation Generator</h2>
-                    <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn" style="background: #25D366; color: white; border: none;" onclick="if(document.getElementById('quote-select-lead').value) { openWhatsAppModal(document.getElementById('quote-select-lead').value); } else { alert('Please select an existing lead from the dropdown first to send via WhatsApp!'); }"><i class="fa-brands fa-whatsapp"></i> Share via WhatsApp</button>
+                        <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
+                    </div>
                 </div>
                 
                 <div class="form-grid no-print" style="background: var(--indigo-bg); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem;">
@@ -1034,19 +1046,30 @@
                     </div>
                     <div class="form-group">
                         <label>Event Type</label>
-                        <input type="text" id="quote-event-type" value="Grand Wedding & Reception">
+                        <input type="text" id="quote-event-type" value="Grand Wedding Celebration">
                     </div>
                     <div class="form-group">
                         <label>Event Date</label>
                         <input type="date" id="quote-event-date" value="2026-11-20">
                     </div>
+                    <div class="form-group full-width" style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <label style="margin-bottom: 0.5rem; display: block; color: var(--primary-indigo);">Event Functions / Ceremonies (Manually Editable) *</label>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <input type="text" id="quote-functions-input" value="Haldi, Mehendi, Grand Wedding & Reception" placeholder="Type functions e.g. Mehendi, Wedding, Reception..." style="flex: 1; min-width: 250px;" oninput="calculateQuote()">
+                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('quote-functions-input').value += ', Cocktail'; calculateQuote();">+ Cocktail</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('quote-functions-input').value += ', Sangeet'; calculateQuote();">+ Sangeet</button>
+                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('quote-functions-input').value = 'Grand Wedding & Reception'; calculateQuote();">Reset</button>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Type custom function names above or click buttons to append</span>
+                    </div>
                     <div class="form-group">
                         <label>Selected Hall / Space</label>
                         <select id="quote-space" onchange="calculateQuote()">
-                            <option value="Grand Imperial Ballroom + Lush Lawn (Cap: 800 pax)">Grand Imperial Ballroom + Lush Lawn (Cap: 800 pax)</option>
-                            <option value="Grand Ballroom Only (Cap: 400 pax)">Grand Ballroom Only (Cap: 400 pax)</option>
-                            <option value="Rooftop Star Terrace (Cap: 200 pax)">Rooftop Star Terrace (Cap: 200 pax)</option>
-                            <option value="Entire Lumora Bloom Complex (Cap: 1200 pax)">Entire Lumora Bloom Complex (Cap: 1200 pax)</option>
+                            <option value="Lumora Grand (Cap: 800 pax)" selected>Lumora Grand (Cap: 800 pax)</option>
+                            <option value="Hall 1 (Cap: 300 pax)">Hall 1 (Cap: 300 pax)</option>
+                            <option value="Hall 2 (Cap: 300 pax)">Hall 2 (Cap: 300 pax)</option>
+                            <option value="Terrace (Cap: 150 pax)">Terrace (Cap: 150 pax)</option>
+                            <option value="Hall 1 + Hall 2 Combined (Cap: 600 pax)">Hall 1 + Hall 2 Combined (Cap: 600 pax)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1056,41 +1079,40 @@
                     <div class="form-group">
                         <label>Catering Tier / Per Plate Rate (₹)</label>
                         <select id="quote-package" onchange="calculateQuote()">
-                            <option value="2200">Platinum Imperial Package @ ₹2,200 / plate</option>
-                            <option value="1800" selected>Gold Royal Package @ ₹1,800 / plate</option>
-                            <option value="1400">Silver Blossom Package @ ₹1,400 / plate</option>
-                            <option value="1000">High-Tea / Social Gathering @ ₹1,000 / plate</option>
+                            <option value="3000">Diamond Royal Package @ ₹3,000 / plate</option>
+                            <option value="2400" selected>Gold Imperial Package @ ₹2,400 / plate</option>
+                            <option value="1800">Silver Blossom Package @ ₹1,800 / plate</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Luxury Decor & Floral Setup (₹)</label>
-                        <input type="number" id="quote-decor" value="125000" oninput="calculateQuote()">
+                        <label>Guest Rooms Required (Count)</label>
+                        <input type="number" id="quote-rooms" value="10" oninput="calculateQuote()">
                     </div>
                     <div class="form-group">
-                        <label>DJ, Stage & Intelligent Lighting (₹)</label>
-                        <input type="number" id="quote-dj" value="35000" oninput="calculateQuote()">
+                        <label>Room Price per Night / Day (₹ - Manually Editable)</label>
+                        <input type="number" id="quote-room-rate" value="3500" oninput="calculateQuote()">
                     </div>
                     <div class="form-group">
                         <label>Special Discount Amount (₹)</label>
-                        <input type="number" id="quote-discount" value="15000" oninput="calculateQuote()">
+                        <input type="number" id="quote-discount" value="20000" oninput="calculateQuote()">
                     </div>
                 </div>
 
                 <!-- Printable Quote Box -->
                 <div class="quote-box">
                     <div class="quote-header">
-                        <div style="display: flex; align-items: center; gap: 1rem;">
-                            <img src="data:image/png;base64,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" alt="Logo" style="height: 70px;">
+                        <div style="display: flex; align-items: center; gap: 1.25rem;">
+                            <img src="data:image/png;base64,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" alt="Lumora Bloom Logo" style="height: 115px; max-width: 250px; object-fit: contain;">
                             <div>
-                                <h1 style="font-family: 'Playfair Display', serif; color: var(--primary-indigo); font-size: 1.8rem;">LUMORA BLOOM</h1>
+                                <h1 style="font-family: 'Playfair Display', serif; color: var(--primary-indigo); font-size: 1.85rem;">LUMORA BLOOM</h1>
                                 <p style="font-size: 0.85rem; color: var(--gold-accent); font-weight: 700; letter-spacing: 1px;">LUXURY BANQUET HALL & LAWNS</p>
-                                <p style="font-size: 0.8rem; color: var(--text-muted);">Raj Nagar Extension, Ghaziabad, Delhi NCR • Tel: +91 98765 43210</p>
+                                <p style="font-size: 0.8rem; color: var(--text-muted);">Raj Nagar Extension, Ghaziabad, Delhi NCR • Tel: +91 99716 33226 / +91 99716 33225</p>
                             </div>
                         </div>
                         <div style="text-align: right;">
                             <h2 style="color: var(--primary-indigo); font-size: 1.4rem;">EVENT QUOTATION</h2>
                             <p style="font-size: 0.85rem; color: var(--text-muted);">Date: <span id="quote-print-date">03/07/2026</span></p>
-                            <p style="font-size: 0.85rem; color: var(--text-muted);">Quote Ref: <strong style="color: var(--primary-indigo);">LB-2026-892</strong></p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted);">Quote Ref: <strong style="color: var(--primary-indigo);">LB-2026-901</strong></p>
                         </div>
                     </div>
 
@@ -1098,12 +1120,13 @@
                         <div>
                             <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Prepared For:</p>
                             <h3 style="color: var(--primary-indigo); font-size: 1.15rem; margin-top: 0.2rem;" id="print-client-name">Mr. & Mrs. Sharma</h3>
-                            <p style="font-size: 0.9rem;" id="print-event-type">Grand Wedding & Reception</p>
+                            <p style="font-size: 0.9rem;" id="print-event-type">Grand Wedding Celebration</p>
+                            <p style="font-size: 0.85rem; color: var(--primary-indigo); margin-top: 0.4rem; font-weight: 600;">✨ Functions: <span id="print-functions">Haldi, Mehendi, Wedding, Reception</span></p>
                         </div>
                         <div>
                             <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Event Specification:</p>
                             <p style="font-size: 0.9rem; margin-top: 0.2rem;"><strong>Date:</strong> <span id="print-event-date">20-Nov-2026</span></p>
-                            <p style="font-size: 0.9rem;"><strong>Venue Space:</strong> <span id="print-space">Grand Imperial Ballroom + Lush Lawn</span></p>
+                            <p style="font-size: 0.9rem;"><strong>Venue Space:</strong> <span id="print-space">Lumora Grand (Cap: 800 pax)</span></p>
                             <p style="font-size: 0.9rem;"><strong>Expected Guests:</strong> <span id="print-guests">350</span> Persons</p>
                         </div>
                     </div>
@@ -1123,37 +1146,27 @@
                                 <td>1</td>
                                 <td>
                                     <strong>Luxury Banquet Catering Package</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Includes Welcome Drinks, 4 Starters, Live Counters, Main Course Buffet, & Assorted Desserts.</span>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Includes Welcome Drinks, Starters, Live Counters, Main Course Buffet & Assorted Desserts.</span>
                                 </td>
-                                <td id="print-plate-rate">₹1,800</td>
+                                <td id="print-plate-rate">₹2,400</td>
                                 <td id="print-guest-qty">350</td>
-                                <td style="text-align: right;" id="print-food-total">₹6,30,000</td>
+                                <td style="text-align: right;" id="print-food-total">₹8,40,000</td>
                             </tr>
                             <tr>
                                 <td>2</td>
                                 <td>
-                                    <strong>Royal Theme Floral & Stage Decoration</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Custom entrance gate, bridal backdrop, table centerpieces, and seating arrangement.</span>
+                                    <strong>Guest Accommodation / Rooms Facility</strong><br>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Luxury AC guest rooms with attached bath, toiletries, and 24/7 room service support.</span>
                                 </td>
-                                <td>Lump Sum</td>
-                                <td>1</td>
-                                <td style="text-align: right;" id="print-decor">₹1,25,000</td>
+                                <td id="print-room-rate">₹3,500</td>
+                                <td id="print-room-qty">10</td>
+                                <td style="text-align: right;" id="print-room-total">₹35,000</td>
                             </tr>
                             <tr>
                                 <td>3</td>
                                 <td>
-                                    <strong>DJ, Intelligent Lighting & Sound Setup</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">JBL line array sound system, LED wall backdrop, fog machine, and professional DJ artist.</span>
-                                </td>
-                                <td>Lump Sum</td>
-                                <td>1</td>
-                                <td style="text-align: right;" id="print-dj">₹35,000</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>
                                     <strong>Bridal Suite & Valet Parking Facility</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Complimentary AC bridal dressing room and valet attendants for up to 150 vehicles.</span>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Complimentary AC bridal dressing room and valet attendants for guest parking.</span>
                                 </td>
                                 <td>Complimentary</td>
                                 <td>1</td>
@@ -1163,31 +1176,31 @@
                     </table>
 
                     <div class="quote-total-section">
-                        <div class="quote-total-box">
+                        <div class="quote-total-box" style="width: 320px;">
                             <div class="total-row">
                                 <span>Subtotal:</span>
-                                <span id="print-subtotal">₹7,90,000</span>
+                                <span id="print-subtotal">₹8,75,000</span>
                             </div>
                             <div class="total-row">
                                 <span>Special Discount:</span>
-                                <span id="print-discount" style="color: var(--danger);">- ₹15,000</span>
+                                <span id="print-discount" style="color: var(--danger);">- ₹20,000</span>
                             </div>
                             <div class="total-row">
                                 <span>GST (18%):</span>
-                                <span id="print-gst">₹1,39,500</span>
+                                <span id="print-gst">₹1,53,900</span>
                             </div>
                             <div class="total-row grand">
                                 <span>Grand Total:</span>
-                                <span id="print-grand-total">₹9,14,500</span>
+                                <span id="print-grand-total">₹10,08,900</span>
                             </div>
                         </div>
                     </div>
 
                     <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); font-size: 0.8rem; color: var(--text-muted);">
                         <p><strong>Terms & Conditions:</strong></p>
-                        <p>1. 25% token advance required to block and confirm the event date. 50% payable 15 days prior to event. Balance 25% payable on the event date before commencement.</p>
+                        <p>1. 25% token advance required to confirm and block the event date. 50% payment is payable 1 month prior to the event date. Balance 25% payment is payable 1 week prior to the event commencement.</p>
                         <p>2. Outside catering and fireworks inside the hall are strictly prohibited.</p>
-                        <p>3. This quotation is valid for 10 days from the date of issuance.</p>
+                        <p>3. This quotation is valid for 7 days from the date of issuance.</p>
                         <br>
                         <div style="display: flex; justify-content: space-between; margin-top: 2rem;">
                             <div>
@@ -1204,8 +1217,6 @@
                 </div>
             </div>
         </div>
-
-    </div>
 
     <!-- MODAL: DATABASE CONNECTION STATUS -->
     <div id="modal-db" class="modal-overlay">
@@ -1308,7 +1319,7 @@
     <div id="modal-followup" class="modal-overlay">
         <div class="modal-box" style="max-width: 700px; border-color: var(--danger);">
             <div class="modal-header" style="background: var(--danger);">
-                <h3><i class="fa-solid fa-bell"></i> 4. Follow-up Alarm & Action Pop-up!</h3>
+                <h3><i class="fa-solid fa-bell"></i> Follow-up Alarm & Action Pop-up!</h3>
                 <button class="modal-close" onclick="closeModal('modal-followup')">&times;</button>
             </div>
             <div class="modal-body">
@@ -1359,6 +1370,74 @@
         </div>
     </div>
 
+    
+    
+    <!-- MODAL: ONE-CLICK WHATSAPP MESSAGING -->
+    <div id="modal-whatsapp" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px; border-color: #25D366;">
+            <div class="modal-header" style="background: #25D366;">
+                <h3><i class="fa-brands fa-whatsapp"></i> 💬 Send Instant WhatsApp Message</h3>
+                <button class="modal-close" onclick="closeModal('modal-whatsapp')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="wa-lead-id">
+                <div style="background: #e6fcf5; padding: 1rem; border-radius: 8px; border: 1px solid #63e6be; margin-bottom: 1.25rem;">
+                    <p style="font-size: 0.9rem; color: #087f5b;">
+                        <strong>Client:</strong> <span id="wa-client-name">Name</span> (<span id="wa-client-phone">Phone</span>)<br>
+                        <strong>Event:</strong> <span id="wa-client-event">Event</span> on <span id="wa-client-date">Date</span>
+                    </p>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="color: #087f5b;">Select Message Template</label>
+                    <select id="wa-template-select" onchange="updateWaMessagePreview()" style="border-color: #25D366;">
+                        <option value="welcome">🌟 1. Warm Greeting & Visit Invitation (Default)</option>
+                        <option value="visit">📍 2. Site Visit Confirmation & Location Landmark</option>
+                        <option value="followup">⏰ 3. Auspicious Saya Date Holding & Follow-up</option>
+                        <option value="quote">📄 4. Quotation & Price Estimate Summary</option>
+                        <option value="custom">✏️ 5. Custom / Manual Message</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label style="color: #087f5b;">Message Preview (You can edit before sending):</label>
+                    <textarea id="wa-message-text" rows="7" style="font-family: inherit; font-size: 0.9rem; line-height: 1.4; border: 1.5px solid #25D366;"></textarea>
+                </div>
+
+                <button class="btn" style="background: #25D366; color: white; width: 100%; justify-content: center; font-size: 1rem; padding: 0.85rem; font-weight: 700; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);" onclick="sendWhatsAppNow()">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> 🚀 Open WhatsApp & Send Message
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: MOBILE ACCESS & QR CODE -->
+    <div id="modal-qr" class="modal-overlay">
+        <div class="modal-box" style="max-width: 550px; text-align: center;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-qrcode"></i> 📱 Scan & Open on Any Device!</h3>
+                <button class="modal-close" onclick="closeModal('modal-qr')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 0.95rem; color: var(--text-main); margin-bottom: 1rem;">
+                    Point your iPhone or Android phone camera at the QR Code below to instantly open the <strong>Lumora Bloom CRM</strong> on your phone!
+                </p>
+                <div style="background: #fdfaf5; padding: 1.5rem; border-radius: 12px; border: 2px solid var(--gold-accent); display: inline-block; margin-bottom: 1.25rem;">
+                    <canvas id="qr-code-canvas"></canvas>
+                </div>
+                <div style="background: var(--indigo-bg); padding: 0.85rem; border-radius: 8px; font-size: 0.85rem; color: var(--primary-indigo); word-break: break-all; margin-bottom: 1rem;">
+                    <strong>Direct Link:</strong> <span id="qr-direct-link">Detecting...</span>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">
+                    💡 <em>Note: Your phone must be connected to the same Wi-Fi network if running locally, or scan from your live cloud link!</em>
+                </p>
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button class="btn btn-primary" onclick="closeModal('modal-qr')">Got It, Thanks!</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript Logic -->
     <script>
         // Default Sample Data for Lumora Bloom Banquet Hall, Raj Nagar Extension
@@ -1373,7 +1452,7 @@
                 budget: 850000,
                 status: 'Price Quote Sent',
                 followup: '2026-07-03', // TODAY
-                remarks: 'Visited Grand Ballroom yesterday. Loved chandelier & gold theme. Needs 5% discount on live chaat counter.'
+                remarks: 'Visited Hall 1 & Hall 2 yesterday. Loved chandelier & gold theme. Needs 5% discount on live chaat counter.'
             },
             {
                 id: '2',
@@ -1397,7 +1476,7 @@
                 budget: 250000,
                 status: 'New Inquiry',
                 followup: '2026-07-04',
-                remarks: 'Inquired via WedMeGood. Wants Rooftop Star Terrace for evening lighting.'
+                remarks: 'Inquired via WedMeGood. Wants Hall 2 evening lighting for evening lighting.'
             },
             {
                 id: '4',
@@ -1433,7 +1512,7 @@
                 budget: 550000,
                 status: 'Site Visit Scheduled',
                 followup: '2026-07-03', // TODAY
-                remarks: 'Wants Lush Lawn + Ballroom combo. Client arriving for food tasting at 5 PM today.'
+                remarks: 'Wants Hall 1 + Hall 2 combined setup. Client arriving for food tasting at 5 PM today.'
             }
         ];
 
@@ -1520,6 +1599,19 @@
                             remarks: l.remarks
                         }));
                     }
+                    try {
+                        const tRes = await fetch('/api/tasks').catch(() => null) || await fetch('http://localhost:5000/api/tasks').catch(() => null);
+                        if (tRes && tRes.ok) {
+                            const tData = await tRes.json();
+                            if (tData.success) {
+                                customTasks = tData.data.map(t => ({
+                                    id: t._id || t.id,
+                                    text: t.text,
+                                    completed: t.completed
+                                }));
+                            }
+                        }
+                    } catch(e) {}
                     document.getElementById('db-status-badge').innerHTML = '<i class="fa-solid fa-database"></i> 🟢 MongoDB Connected';
                     document.getElementById('db-status-badge').className = 'btn db-badge-connected';
                     if (banner) {
@@ -1572,9 +1664,8 @@
         function updateStats() {
             document.getElementById('stat-total').innerText = leads.length;
             
-            const activeLeads = leads.filter(l => l.status !== 'Dead Lead');
-            const totalVal = activeLeads.reduce((sum, l) => sum + (Number(l.budget) || 0), 0);
-            document.getElementById('stat-val').innerText = '₹' + totalVal.toLocaleString('en-IN');
+            const hotLeads = leads.filter(l => l.status === 'Price Quote Sent' || l.status === 'Site Visit Scheduled' || l.status === 'New Inquiry');
+            document.getElementById('stat-val').innerText = hotLeads.length;
 
             const booked = leads.filter(l => l.status === 'Booked / Won').length;
             document.getElementById('stat-booked').innerText = booked;
@@ -1611,6 +1702,8 @@
             active.forEach(l => {
                 const badgeClass = getBadgeClass(l.status);
                 const tr = document.createElement('tr');
+                tr.style.cursor = 'pointer';
+                tr.onclick = (e) => { if(!e.target.closest('button')) editLead(l.id); };
                 tr.innerHTML = `
                     <td><strong>${l.name}</strong><br><span style="font-size: 0.8rem; color: var(--text-muted);">${l.phone}</span></td>
                     <td><span style="color: var(--primary-indigo); font-weight: 600;">${l.event}</span><br><span style="font-size: 0.8rem; color: var(--text-muted);">Date: ${l.date} (${l.guests} pax)</span></td>
@@ -1618,7 +1711,8 @@
                     <td><span class="badge ${badgeClass}">${l.status}</span></td>
                     <td><strong style="${l.followup <= TODAY_STR ? 'color: var(--danger);' : ''}">${l.followup === TODAY_STR ? 'TODAY 🔴' : l.followup}</strong></td>
                     <td>
-                        <button class="btn btn-outline btn-sm" onclick="editLead('${l.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-sm" style="background: #25D366; color: white; border: none;" onclick="openWhatsAppModal('${l.id}')" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                        
                         <button class="btn btn-primary btn-sm" onclick="quoteLead('${l.id}')"><i class="fa-solid fa-file-invoice"></i></button>
                     </td>
                 `;
@@ -1654,7 +1748,7 @@
                                 <p style="margin-top: 0.2rem; font-style: italic;">"${l.remarks}"</p>
                             </div>
                             <div style="display: flex; gap: 0.4rem; flex-direction: column;">
-                                <a href="tel:${l.phone}" class="btn btn-primary btn-sm" style="text-align: center;"><i class="fa-solid fa-phone"></i> Call</a>
+                                <button class="btn btn-sm" style="background: #25D366; color: white; border: none; text-align: center;" onclick="openWhatsAppModal('${l.id}')"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
                                 <button class="btn btn-outline btn-sm" onclick="editLead('${l.id}')">Update Status</button>
                             </div>
                         </div>
@@ -1680,31 +1774,91 @@
             });
         }
 
-        function addCustomTask() {
+        async function addCustomTask() {
             const input = document.getElementById('custom-task-input');
             if (!input.value.trim()) return;
-            customTasks.push({ id: 't_' + Date.now(), text: input.value.trim(), completed: false });
+            const text = input.value.trim();
+            if (isMongoConnected) {
+                try {
+                    const res = await fetch('/api/tasks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, completed: false })
+                    }).catch(() => fetch('http://localhost:5000/api/tasks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, completed: false })
+                    }));
+                    const data = await res.json();
+                    if (data.success) {
+                        customTasks.unshift({ id: data.data._id, text, completed: false });
+                    }
+                } catch(e) {
+                    customTasks.push({ id: 't_' + Date.now(), text, completed: false });
+                }
+            } else {
+                customTasks.push({ id: 't_' + Date.now(), text, completed: false });
+            }
             input.value = '';
             saveToStorage();
         }
 
-        function addCustomTaskFromDedicated() {
+        async function addCustomTaskFromDedicated() {
             const input = document.getElementById('dedicated-custom-input');
             if (!input.value.trim()) return;
-            customTasks.push({ id: 't_' + Date.now(), text: input.value.trim(), completed: false });
+            const text = input.value.trim();
+            if (isMongoConnected) {
+                try {
+                    const res = await fetch('/api/tasks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, completed: false })
+                    }).catch(() => fetch('http://localhost:5000/api/tasks', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, completed: false })
+                    }));
+                    const data = await res.json();
+                    if (data.success) {
+                        customTasks.unshift({ id: data.data._id, text, completed: false });
+                    }
+                } catch(e) {
+                    customTasks.push({ id: 't_' + Date.now(), text, completed: false });
+                }
+            } else {
+                customTasks.push({ id: 't_' + Date.now(), text, completed: false });
+            }
             input.value = '';
             saveToStorage();
         }
 
-        function toggleTask(id) {
+        async function toggleTask(id) {
             const t = customTasks.find(x => x.id === id);
             if (t) {
                 t.completed = !t.completed;
+                if (isMongoConnected) {
+                    try {
+                        await fetch('/api/tasks/' + id, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ completed: t.completed })
+                        }).catch(() => fetch('http://localhost:5000/api/tasks/' + id, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ completed: t.completed })
+                        }));
+                    } catch(e) {}
+                }
                 saveToStorage();
             }
         }
 
-        function deleteTask(id) {
+        async function deleteTask(id) {
+            if (isMongoConnected) {
+                try {
+                    await fetch('/api/tasks/' + id, { method: 'DELETE' }).catch(() => fetch('http://localhost:5000/api/tasks/' + id, { method: 'DELETE' }));
+                } catch(e) {}
+            }
             customTasks = customTasks.filter(x => x.id !== id);
             saveToStorage();
         }
@@ -1733,9 +1887,11 @@
             filtered.forEach(l => {
                 const badgeClass = getBadgeClass(l.status);
                 const tr = document.createElement('tr');
+                tr.style.cursor = 'pointer';
+                tr.onclick = (e) => { if(!e.target.closest('button')) editLead(l.id); };
                 tr.innerHTML = `
                     <td><strong>${l.name}</strong></td>
-                    <td><a href="tel:${l.phone}" style="color: var(--primary-indigo); font-weight: 600; text-decoration: none;"><i class="fa-solid fa-phone"></i> ${l.phone}</a></td>
+                    <td><span style="color: var(--primary-indigo); font-weight: 600;"><i class="fa-solid fa-phone"></i> ${l.phone}</span></td>
                     <td>${l.event}</td>
                     <td><strong>${l.date}</strong></td>
                     <td>${l.guests} pax</td>
@@ -1745,7 +1901,8 @@
                     <td style="max-width: 200px; font-size: 0.8rem; color: var(--text-muted);">${l.remarks || '-'}</td>
                     <td>
                         <div style="display: flex; gap: 0.35rem;">
-                            <button class="btn btn-outline btn-sm" title="Edit Lead" onclick="editLead('${l.id}')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-sm" style="background: #25D366; color: white; border: none;" title="Send WhatsApp" onclick="openWhatsAppModal('${l.id}')"><i class="fa-brands fa-whatsapp"></i></button>
+                            
                             <button class="btn btn-primary btn-sm" title="Generate Quotation" onclick="quoteLead('${l.id}')"><i class="fa-solid fa-file-invoice-dollar"></i></button>
                             <button class="btn btn-danger btn-sm" title="Delete Lead" onclick="deleteLead('${l.id}')"><i class="fa-solid fa-trash"></i></button>
                         </div>
@@ -1788,6 +1945,8 @@
 
                 const card = document.createElement('div');
                 card.className = 'kanban-card';
+                card.style.cursor = 'pointer';
+                card.onclick = (e) => { if(!e.target.closest('button')) editLead(l.id); };
                 card.innerHTML = `
                     <h4>${l.name}</h4>
                     <div class="kanban-meta">
@@ -1798,7 +1957,7 @@
                     </div>
                     ${l.remarks ? `<p style="font-size: 0.75rem; color: var(--text-muted); background: #f8f9fa; padding: 0.4rem; border-radius: 4px; margin-top: 0.4rem;">"${l.remarks}"</p>` : ''}
                     <div class="kanban-actions">
-                        <button class="btn btn-outline btn-sm" onclick="editLead('${l.id}')">Edit</button>
+                        
                         ${getNextStageButton(l)}
                     </div>
                 `;
@@ -1852,6 +2011,8 @@
 
             dead.forEach(l => {
                 const tr = document.createElement('tr');
+                tr.style.cursor = 'pointer';
+                tr.onclick = (e) => { if(!e.target.closest('button')) editLead(l.id); };
                 tr.innerHTML = `
                     <td><strong>${l.name}</strong></td>
                     <td>${l.phone}</td>
@@ -1985,6 +2146,92 @@
             document.getElementById('modal-db').classList.add('active');
         }
 
+        
+        async 
+        /* WhatsApp Messaging Logic */
+        function openWhatsAppModal(id) {
+            const l = leads.find(x => x.id === id);
+            if (!l) return;
+            document.getElementById('wa-lead-id').value = l.id;
+            document.getElementById('wa-client-name').innerText = l.name;
+            document.getElementById('wa-client-phone').innerText = l.phone;
+            document.getElementById('wa-client-event').innerText = l.event;
+            document.getElementById('wa-client-date').innerText = l.date;
+            document.getElementById('wa-template-select').value = 'welcome';
+            updateWaMessagePreview();
+            document.getElementById('modal-whatsapp').classList.add('active');
+        }
+
+        function updateWaMessagePreview() {
+            const id = document.getElementById('wa-lead-id').value;
+            const l = leads.find(x => x.id === id);
+            if (!l) return;
+            const type = document.getElementById('wa-template-select').value;
+            const box = document.getElementById('wa-message-text');
+
+            if (type === 'welcome') {
+                box.value = `Namaste! ${l.name} ✨
+
+We are so happy you’re considering *Lumora Bloom* for your special celebration. 🌸 We have received your enquiry and are working on a tailored proposal for you. We would love to welcome you for a visit soon so we can plan all the beautiful details together! 🥂 Looking forward to hearing from you.
+
+Warmly,
+
+The Lumora Bloom Team 🌿`;
+            } else if (type === 'visit') {
+                box.value = `Hello ${l.name} Ji! 💐\n\nWe are excited to welcome you to *Lumora Bloom Banquet* today for your site visit regarding your *${l.event}* on *${l.date}*.\n\n📍 *Venue Location:* Lumora Bloom Banquet Hall & Lawns, Raj Nagar Extension, Ghaziabad, Delhi NCR.\n\nPlease feel free to call our floor manager upon arrival! Let's make your celebration unforgettable. ✨\n\n📞 *Booking Desk:* 9971633226 / 9971633225`;
+            } else if (type === 'followup') {
+                box.value = `Namaste ${l.name} Ji! 🙏\n\nWe hope you and your family loved the chandelier & lawn setups during your visit to *Lumora Bloom*! ✨\n\nAs *${l.date}* is a high-demand auspicious Saya wedding date, we are currently getting multiple inquiries for Hall 1 & Hall 2.\n\nPlease let us know if we can hold and block the venue space for your *${l.event}*. We can offer you a special customized discount on the advance token booking! 💐\n\nWarm regards,\n*Team Lumora Bloom*\n📞 9971633226 / 9971633225`;
+            } else if (type === 'quote') {
+                box.value = `Namaste ${l.name} Ji! 📄\n\nHere is the initial estimate summary for your *${l.event}* at *Lumora Bloom Banquet*:\n\n📅 *Event Date:* ${l.date}\n👥 *Expected Guests:* ${l.guests} Pax\n💰 *Estimated Budget:* ₹${Number(l.budget).toLocaleString('en-IN')}\n\n✨ *Includes:* Welcome drinks, live food counters, buffet catering, luxury hall decoration, AC bridal suite, and valet parking facility.\n\nLet us connect on a call to finalize your package! 🥂\n\n*Lumora Bloom Booking Desk*\n📞 9971633226 / 9971633225`;
+            } else if (type === 'custom') {
+                box.value = `Namaste ${l.name} Ji! 🙏\n\nGreetings from Lumora Bloom Banquet Hall & Lawns, Raj Nagar Extension.\n\n[Type your custom message here...]\n\n📞 *Booking Desk:* 9971633226 / 9971633225`;
+            }
+        }
+
+        function sendWhatsAppNow() {
+            const id = document.getElementById('wa-lead-id').value;
+            const l = leads.find(x => x.id === id);
+            if (!l) return;
+            const text = document.getElementById('wa-message-text').value;
+            
+            // Clean phone number (remove spaces, dashes, + sign)
+            let phone = l.phone.replace(/[^0-9]/g, '');
+            if (phone.length === 10) {
+                phone = '91' + phone;
+            }
+            
+            const encodedText = encodeURIComponent(text);
+            const waUrl = `https://wa.me/${phone}?text=${encodedText}`;
+            window.open(waUrl, '_blank');
+            closeModal('modal-whatsapp');
+        }
+
+        function openQrModal() {
+            document.getElementById('modal-qr').classList.add('active');
+            let targetUrl = window.location.href;
+            try {
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') {
+                    const res = await fetch('/api/network-info').catch(() => null) || await fetch('http://localhost:5000/api/network-info').catch(() => null);
+                    if (res && res.ok) {
+                        const data = await res.json();
+                        if (data.url && !data.url.includes('localhost')) {
+                            targetUrl = data.url;
+                        }
+                    }
+                }
+            } catch(e) {}
+
+            document.getElementById('qr-direct-link').innerText = targetUrl;
+            new QRious({
+                element: document.getElementById('qr-code-canvas'),
+                value: targetUrl,
+                size: 220,
+                level: 'H',
+                foreground: '#1800ad',
+                background: '#ffffff'
+            });
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
@@ -2023,12 +2270,17 @@
             const space = document.getElementById('quote-space').value;
             const guests = parseInt(document.getElementById('quote-guests').value) || 0;
             const plateRate = parseInt(document.getElementById('quote-package').value) || 0;
-            const decor = parseInt(document.getElementById('quote-decor').value) || 0;
-            const dj = parseInt(document.getElementById('quote-dj').value) || 0;
+            const rooms = parseInt(document.getElementById('quote-rooms').value) || 0;
+            const roomRate = parseInt(document.getElementById('quote-room-rate').value) || 0;
             const discount = parseInt(document.getElementById('quote-discount').value) || 0;
 
+            // Get manually typed functions
+            const funcInput = document.getElementById('quote-functions-input');
+            const funcText = funcInput && funcInput.value.trim() ? funcInput.value.trim() : 'Standard Banquet Celebration';
+
             const foodTotal = guests * plateRate;
-            const subtotal = foodTotal + decor + dj;
+            const roomTotal = rooms * roomRate;
+            const subtotal = foodTotal + roomTotal;
             const discountedSub = Math.max(0, subtotal - discount);
             const gst = Math.round(discountedSub * 0.18);
             const grandTotal = discountedSub + gst;
@@ -2039,13 +2291,19 @@
             document.getElementById('print-event-date').innerText = eventDate;
             document.getElementById('print-space').innerText = space;
             document.getElementById('print-guests').innerText = guests;
+            if (document.getElementById('print-functions')) {
+                document.getElementById('print-functions').innerText = funcText;
+            }
 
             document.getElementById('print-plate-rate').innerText = '₹' + plateRate.toLocaleString('en-IN');
             document.getElementById('print-guest-qty').innerText = guests;
             document.getElementById('print-food-total').innerText = '₹' + foodTotal.toLocaleString('en-IN');
 
-            document.getElementById('print-decor').innerText = '₹' + decor.toLocaleString('en-IN');
-            document.getElementById('print-dj').innerText = '₹' + dj.toLocaleString('en-IN');
+            if (document.getElementById('print-room-rate')) {
+                document.getElementById('print-room-rate').innerText = '₹' + roomRate.toLocaleString('en-IN');
+                document.getElementById('print-room-qty').innerText = rooms;
+                document.getElementById('print-room-total').innerText = '₹' + roomTotal.toLocaleString('en-IN');
+            }
 
             document.getElementById('print-subtotal').innerText = '₹' + subtotal.toLocaleString('en-IN');
             document.getElementById('print-discount').innerText = '- ₹' + discount.toLocaleString('en-IN');

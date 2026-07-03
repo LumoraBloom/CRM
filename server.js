@@ -15,10 +15,27 @@ const cors = require('cors');
 const multer = require('multer');
 const XLSX = require('xlsx');
 const path = require('path');
+const os = require('os');
 const Lead = require('./models/Lead');
+const Task = require('./models/Task');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Helper function to detect local Wi-Fi / LAN IPv4 Address
+function getLocalIp() {
+    const interfaces = os.networkInterfaces();
+    for (const devName in interfaces) {
+        const iface = interfaces[devName];
+        for (let i = 0; i < iface.length; i++) {
+            const alias = iface[i];
+            if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+                return alias.address;
+            }
+        }
+    }
+    return 'localhost';
+}
 
 // Middleware
 app.use(cors());
@@ -46,8 +63,22 @@ const upload = multer({ dest: 'uploads/' });
 // ==========================================
 
 /**
+ * 0. GET /api/network-info
+ * Returns server LAN IP address so frontend can generate Mobile QR Code
+ */
+app.get('/api/network-info', (req, res) => {
+    const ip = getLocalIp();
+    res.status(200).json({
+        success: true,
+        ip: ip,
+        port: PORT,
+        url: `http://${ip}:${PORT}`
+    });
+});
+
+/**
  * 1. GET /api/leads
- * Fetch all leads with optional filtering (status, event, search text)
+ * Fetch all leads with optional filtering
  */
 app.get('/api/leads', async (req, res) => {
     try {
@@ -77,7 +108,6 @@ app.get('/api/leads', async (req, res) => {
 
 /**
  * 2. GET /api/leads/today-followups
- * Fetch leads that need follow-up today or are overdue
  */
 app.get('/api/leads/today-followups', async (req, res) => {
     try {
@@ -95,7 +125,6 @@ app.get('/api/leads/today-followups', async (req, res) => {
 
 /**
  * 3. POST /api/leads
- * Create a new banquet inquiry lead
  */
 app.post('/api/leads', async (req, res) => {
     try {
@@ -108,7 +137,6 @@ app.post('/api/leads', async (req, res) => {
 
 /**
  * 4. PUT /api/leads/:id
- * Update an existing lead (e.g., advancing stage in Pipeline or updating notes)
  */
 app.put('/api/leads/:id', async (req, res) => {
     try {
@@ -127,7 +155,6 @@ app.put('/api/leads/:id', async (req, res) => {
 
 /**
  * 5. DELETE /api/leads/:id
- * Delete a lead
  */
 app.delete('/api/leads/:id', async (req, res) => {
     try {
@@ -143,7 +170,6 @@ app.delete('/api/leads/:id', async (req, res) => {
 
 /**
  * 6. POST /api/leads/import
- * Bulk import leads from Excel (.xlsx) or CSV file into MongoDB
  */
 app.post('/api/leads/import', upload.single('file'), async (req, res) => {
     try {
@@ -182,6 +208,46 @@ app.post('/api/leads/import', upload.single('file'), async (req, res) => {
     }
 });
 
+// ==========================================
+// TASKS REST API ENDPOINTS
+// ==========================================
+
+app.get('/api/tasks', async (req, res) => {
+    try {
+        const tasks = await Task.find().sort({ createdAt: -1 });
+        res.status(200).json({ success: true, count: tasks.length, data: tasks });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+app.post('/api/tasks', async (req, res) => {
+    try {
+        const newTask = await Task.create(req.body);
+        res.status(201).json({ success: true, data: newTask });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+app.put('/api/tasks/:id', async (req, res) => {
+    try {
+        const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.status(200).json({ success: true, data: updatedTask });
+    } catch (error) {
+        res.status(400).json({ success: false, error: error.message });
+    }
+});
+
+app.delete('/api/tasks/:id', async (req, res) => {
+    try {
+        await Task.findByIdAndDelete(req.params.id);
+        res.status(200).json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 /**
  * 7. GET /
  * Serve the standalone CRM Web Dashboard
@@ -192,6 +258,11 @@ app.get('/', (req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-    console.log(`🚀 Lumora Bloom Banquet CRM Backend Server running on http://localhost:${PORT}`);
-    console.log(`📊 Open http://localhost:${PORT} in your browser to access the CRM Dashboard!`);
+    const localIp = getLocalIp();
+    console.log(`\n===================================================================`);
+    console.log(`🚀 Lumora Bloom Banquet CRM Backend Server Running!`);
+    console.log(`💻 Local Computer Access:  http://localhost:${PORT}`);
+    console.log(`📱 Mobile / Wi-Fi Access:  http://${localIp}:${PORT}`);
+    console.log(`👉 Type the mobile link above into ANY phone on your Wi-Fi!`);
+    console.log(`===================================================================\n`);
 });
