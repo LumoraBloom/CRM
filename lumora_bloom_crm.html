@@ -1026,7 +1026,7 @@
         <div id="tab-quote" class="tab-content">
             <div class="card">
                 <div class="card-header">
-                    <h2 class="card-title"><i class="fa-solid fa-file-invoice"></i> Lumora Bloom Quotation Generator</h2>
+                    <h2 class="card-title"><i class="fa-solid fa-file-invoice"></i> Lumora Bloom Multi-Event Quotation Generator</h2>
                     <div style="display: flex; gap: 0.75rem;">
                         <button class="btn" style="background: #25D366; color: white; border: none;" onclick="if(document.getElementById('quote-select-lead').value) { openWhatsAppModal(document.getElementById('quote-select-lead').value); } else { alert('Please select an existing lead from the dropdown first to send via WhatsApp!'); }"><i class="fa-brands fa-whatsapp"></i> Share via WhatsApp</button>
                         <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print / Save as PDF</button>
@@ -1045,45 +1045,59 @@
                         <input type="text" id="quote-client-name" value="Mr. & Mrs. Sharma">
                     </div>
                     <div class="form-group">
-                        <label>Event Type</label>
-                        <input type="text" id="quote-event-type" value="Grand Wedding Celebration">
-                    </div>
-                    <div class="form-group">
-                        <label>Event Date</label>
+                        <label>Primary Event Date</label>
                         <input type="date" id="quote-event-date" value="2026-11-20">
                     </div>
-                    <div class="form-group full-width" style="background: var(--white); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
-                        <label style="margin-bottom: 0.5rem; display: block; color: var(--primary-indigo);">Event Functions / Ceremonies (Manually Editable) *</label>
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <input type="text" id="quote-functions-input" value="Haldi, Mehendi, Grand Wedding & Reception" placeholder="Type functions e.g. Mehendi, Wedding, Reception..." style="flex: 1; min-width: 250px;" oninput="calculateQuote()">
-                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('quote-functions-input').value += ', Cocktail'; calculateQuote();">+ Cocktail</button>
-                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('quote-functions-input').value += ', Sangeet'; calculateQuote();">+ Sangeet</button>
-                            <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('quote-functions-input').value = 'Grand Wedding & Reception'; calculateQuote();">Reset</button>
+                    <div class="form-group">
+                        <label>Special Discount Amount (₹)</label>
+                        <input type="number" id="quote-discount" value="20000" oninput="calculateQuote()">
+                    </div>
+
+                    <!-- MULTI-EVENT FUNCTION SETUP -->
+                    <div class="form-group full-width" style="background: var(--white); padding: 1.25rem; border-radius: 10px; border: 2px solid var(--primary-indigo); margin-top: 0.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+                            <h3 style="color: var(--primary-indigo); font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-calendar-days"></i> Event Functions, Menus & Halls Setup</h3>
+                            <button type="button" class="btn btn-gold btn-sm" onclick="addQuoteEventRow()"><i class="fa-solid fa-plus"></i> + Add Another Event / Ceremony</button>
                         </div>
-                        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Type custom function names above or click buttons to append</span>
+                        
+                        <div id="quote-events-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                            <!-- Event Row 1 -->
+                            <div class="quote-event-row" style="display: grid; grid-template-columns: 2fr 2fr 2fr 1fr auto; gap: 0.75rem; align-items: center; background: #fdfaf5; padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <div>
+                                    <label style="font-size: 0.75rem; color: var(--text-muted);">1. Event Type / Function Name</label>
+                                    <input type="text" class="q-ev-name" value="Grand Wedding & Reception" placeholder="e.g. Wedding, Reception, Haldi..." style="width: 100%; padding: 0.5rem;" oninput="calculateQuote()">
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; color: var(--text-muted);">Selected Hall / Space</label>
+                                    <select class="q-ev-hall" style="width: 100%; padding: 0.5rem;" onchange="calculateQuote()">
+                                        <option value="Lumora Grand (Cap: 800 pax)" selected>Lumora Grand (Cap: 800 pax)</option>
+                                        <option value="Hall 1 (Cap: 300 pax)">Hall 1 (Cap: 300 pax)</option>
+                                        <option value="Hall 2 (Cap: 300 pax)">Hall 2 (Cap: 300 pax)</option>
+                                        <option value="Terrace (Cap: 150 pax)">Terrace (Cap: 150 pax)</option>
+                                        <option value="Hall 1 + Hall 2 Combined (Cap: 600 pax)">Hall 1 + Hall 2 Combined (Cap: 600 pax)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; color: var(--text-muted);">Catering Menu Tier / Rate</label>
+                                    <select class="q-ev-menu" style="width: 100%; padding: 0.5rem;" onchange="calculateQuote()">
+                                        <option value="3000">Diamond Royal @ ₹3,000 / plate</option>
+                                        <option value="2400" selected>Gold Imperial @ ₹2,400 / plate</option>
+                                        <option value="1800">Silver Blossom @ ₹1,800 / plate</option>
+                                        <option value="1500">Custom / High-Tea @ ₹1,500 / plate</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-size: 0.75rem; color: var(--text-muted);">Guest Count</label>
+                                    <input type="number" class="q-ev-guests" value="350" style="width: 100%; padding: 0.5rem;" oninput="calculateQuote()">
+                                </div>
+                                <div style="padding-top: 1.2rem;">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeQuoteEventRow(this)" title="Delete Row" style="padding: 0.5rem 0.65rem;"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Selected Hall / Space</label>
-                        <select id="quote-space" onchange="calculateQuote()">
-                            <option value="Lumora Grand (Cap: 800 pax)" selected>Lumora Grand (Cap: 800 pax)</option>
-                            <option value="Hall 1 (Cap: 300 pax)">Hall 1 (Cap: 300 pax)</option>
-                            <option value="Hall 2 (Cap: 300 pax)">Hall 2 (Cap: 300 pax)</option>
-                            <option value="Terrace (Cap: 150 pax)">Terrace (Cap: 150 pax)</option>
-                            <option value="Hall 1 + Hall 2 Combined (Cap: 600 pax)">Hall 1 + Hall 2 Combined (Cap: 600 pax)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Expected Guest Count</label>
-                        <input type="number" id="quote-guests" value="350" oninput="calculateQuote()">
-                    </div>
-                    <div class="form-group">
-                        <label>Catering Tier / Per Plate Rate (₹)</label>
-                        <select id="quote-package" onchange="calculateQuote()">
-                            <option value="3000">Diamond Royal Package @ ₹3,000 / plate</option>
-                            <option value="2400" selected>Gold Imperial Package @ ₹2,400 / plate</option>
-                            <option value="1800">Silver Blossom Package @ ₹1,800 / plate</option>
-                        </select>
-                    </div>
+
+                    <!-- ROOMS ACCOMMODATION -->
                     <div class="form-group">
                         <label>Guest Rooms Required (Count)</label>
                         <input type="number" id="quote-rooms" value="10" oninput="calculateQuote()">
@@ -1091,10 +1105,6 @@
                     <div class="form-group">
                         <label>Room Price per Night / Day (₹ - Manually Editable)</label>
                         <input type="number" id="quote-room-rate" value="3500" oninput="calculateQuote()">
-                    </div>
-                    <div class="form-group">
-                        <label>Special Discount Amount (₹)</label>
-                        <input type="number" id="quote-discount" value="20000" oninput="calculateQuote()">
                     </div>
                 </div>
 
@@ -1120,14 +1130,13 @@
                         <div>
                             <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Prepared For:</p>
                             <h3 style="color: var(--primary-indigo); font-size: 1.15rem; margin-top: 0.2rem;" id="print-client-name">Mr. & Mrs. Sharma</h3>
-                            <p style="font-size: 0.9rem;" id="print-event-type">Grand Wedding Celebration</p>
-                            <p style="font-size: 0.85rem; color: var(--primary-indigo); margin-top: 0.4rem; font-weight: 600;">✨ Functions: <span id="print-functions">Haldi, Mehendi, Wedding, Reception</span></p>
+                            <p style="font-size: 0.85rem; color: var(--primary-indigo); margin-top: 0.4rem; font-weight: 600;">✨ Functions: <span id="print-functions-summary">Grand Wedding & Reception</span></p>
                         </div>
                         <div>
                             <p style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Event Specification:</p>
-                            <p style="font-size: 0.9rem; margin-top: 0.2rem;"><strong>Date:</strong> <span id="print-event-date">20-Nov-2026</span></p>
-                            <p style="font-size: 0.9rem;"><strong>Venue Space:</strong> <span id="print-space">Lumora Grand (Cap: 800 pax)</span></p>
-                            <p style="font-size: 0.9rem;"><strong>Expected Guests:</strong> <span id="print-guests">350</span> Persons</p>
+                            <p style="font-size: 0.9rem; margin-top: 0.2rem;"><strong>Primary Date:</strong> <span id="print-event-date">20-Nov-2026</span></p>
+                            <p style="font-size: 0.9rem;"><strong>Venue Spaces:</strong> <span id="print-space-summary">Lumora Grand</span></p>
+                            <p style="font-size: 0.9rem;"><strong>Total Guests Across Events:</strong> <span id="print-guests-summary">350</span> Pax</p>
                         </div>
                     </div>
 
@@ -1135,43 +1144,14 @@
                         <thead>
                             <tr>
                                 <th>S.No</th>
-                                <th>Service Description & Package Details</th>
-                                <th>Rate / Unit</th>
-                                <th>Qty / Pax</th>
+                                <th>Event Function, Space & Catering Menu Details</th>
+                                <th>Rate / Plate</th>
+                                <th>Guests / Qty</th>
                                 <th style="text-align: right;">Amount (₹)</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>
-                                    <strong>Luxury Banquet Catering Package</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Includes Welcome Drinks, Starters, Live Counters, Main Course Buffet & Assorted Desserts.</span>
-                                </td>
-                                <td id="print-plate-rate">₹2,400</td>
-                                <td id="print-guest-qty">350</td>
-                                <td style="text-align: right;" id="print-food-total">₹8,40,000</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>
-                                    <strong>Guest Accommodation / Rooms Facility</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Luxury AC guest rooms with attached bath, toiletries, and 24/7 room service support.</span>
-                                </td>
-                                <td id="print-room-rate">₹3,500</td>
-                                <td id="print-room-qty">10</td>
-                                <td style="text-align: right;" id="print-room-total">₹35,000</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>
-                                    <strong>Bridal Suite & Valet Parking Facility</strong><br>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">Complimentary AC bridal dressing room and valet attendants for guest parking.</span>
-                                </td>
-                                <td>Complimentary</td>
-                                <td>1</td>
-                                <td style="text-align: right; color: var(--success); font-weight: 600;">FREE</td>
-                            </tr>
+                        <tbody id="print-services-body">
+                            <!-- Populated dynamically by JS calculateQuote() -->
                         </tbody>
                     </table>
 
@@ -2206,7 +2186,7 @@ The Lumora Bloom Team 🌿`;
             closeModal('modal-whatsapp');
         }
 
-        function openQrModal() {
+        async function openQrModal() {
             document.getElementById('modal-qr').classList.add('active');
             let targetUrl = window.location.href;
             try {
@@ -2263,47 +2243,166 @@ The Lumora Bloom Team 🌿`;
             populateQuoteFromLead();
         }
 
+        function addQuoteEventRow() {
+            const container = document.getElementById('quote-events-container');
+            const rowCount = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'quote-event-row';
+            div.style = 'display: grid; grid-template-columns: 2fr 2fr 2fr 1fr auto; gap: 0.75rem; align-items: center; background: #fdfaf5; padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border-color);';
+            div.innerHTML = `
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">${rowCount}. Event Type / Function Name</label>
+                    <input type="text" class="q-ev-name" value="Haldi / Mehendi Ceremony" placeholder="e.g. Wedding, Reception..." style="width: 100%; padding: 0.5rem;" oninput="calculateQuote()">
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Selected Hall / Space</label>
+                    <select class="q-ev-hall" style="width: 100%; padding: 0.5rem;" onchange="calculateQuote()">
+                        <option value="Terrace (Cap: 150 pax)" selected>Terrace (Cap: 150 pax)</option>
+                        <option value="Hall 1 (Cap: 300 pax)">Hall 1 (Cap: 300 pax)</option>
+                        <option value="Hall 2 (Cap: 300 pax)">Hall 2 (Cap: 300 pax)</option>
+                        <option value="Lumora Grand (Cap: 800 pax)">Lumora Grand (Cap: 800 pax)</option>
+                        <option value="Hall 1 + Hall 2 Combined (Cap: 600 pax)">Hall 1 + Hall 2 Combined (Cap: 600 pax)</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Catering Menu Tier / Rate</label>
+                    <select class="q-ev-menu" style="width: 100%; padding: 0.5rem;" onchange="calculateQuote()">
+                        <option value="3000">Diamond Royal @ ₹3,000 / plate</option>
+                        <option value="2400">Gold Imperial @ ₹2,400 / plate</option>
+                        <option value="1800" selected>Silver Blossom @ ₹1,800 / plate</option>
+                        <option value="1500">Custom / High-Tea @ ₹1,500 / plate</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-size: 0.75rem; color: var(--text-muted);">Guest Count</label>
+                    <input type="number" class="q-ev-guests" value="150" style="width: 100%; padding: 0.5rem;" oninput="calculateQuote()">
+                </div>
+                <div style="padding-top: 1.2rem;">
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeQuoteEventRow(this)" title="Delete Row" style="padding: 0.5rem 0.65rem;"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `;
+            container.appendChild(div);
+            calculateQuote();
+        }
+
+        function removeQuoteEventRow(btn) {
+            const container = document.getElementById('quote-events-container');
+            if (container.children.length > 1) {
+                btn.closest('.quote-event-row').remove();
+                calculateQuote();
+            } else {
+                alert('At least one event function row is required in the quotation!');
+            }
+        }
+
+        function populateQuoteFromLead() {
+            const id = document.getElementById('quote-select-lead').value;
+            const l = leads.find(x => x.id === id);
+            if (l) {
+                document.getElementById('quote-client-name').value = l.name;
+                document.getElementById('quote-event-date').value = l.date;
+                const firstRow = document.querySelector('.quote-event-row');
+                if (firstRow) {
+                    firstRow.querySelector('.q-ev-name').value = l.event;
+                    firstRow.querySelector('.q-ev-guests').value = l.guests;
+                }
+                calculateQuote();
+            }
+        }
+
+        function quoteLead(id) {
+            switchTab('quote');
+            document.getElementById('quote-select-lead').value = id;
+            populateQuoteFromLead();
+        }
+
         function calculateQuote() {
             const client = document.getElementById('quote-client-name').value;
-            const eventType = document.getElementById('quote-event-type').value;
             const eventDate = document.getElementById('quote-event-date').value;
-            const space = document.getElementById('quote-space').value;
-            const guests = parseInt(document.getElementById('quote-guests').value) || 0;
-            const plateRate = parseInt(document.getElementById('quote-package').value) || 0;
             const rooms = parseInt(document.getElementById('quote-rooms').value) || 0;
             const roomRate = parseInt(document.getElementById('quote-room-rate').value) || 0;
             const discount = parseInt(document.getElementById('quote-discount').value) || 0;
 
-            // Get manually typed functions
-            const funcInput = document.getElementById('quote-functions-input');
-            const funcText = funcInput && funcInput.value.trim() ? funcInput.value.trim() : 'Standard Banquet Celebration';
+            const evRows = document.querySelectorAll('.quote-event-row');
+            const tbody = document.getElementById('print-services-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
 
-            const foodTotal = guests * plateRate;
+            let totalFood = 0;
+            let totalGuests = 0;
+            let funcNames = [];
+            let hallNames = [];
+
+            evRows.forEach((row, idx) => {
+                const name = row.querySelector('.q-ev-name').value.trim() || `Event ${idx + 1}`;
+                const hall = row.querySelector('.q-ev-hall').value;
+                const menuRate = parseInt(row.querySelector('.q-ev-menu').value) || 0;
+                const guests = parseInt(row.querySelector('.q-ev-guests').value) || 0;
+                
+                const amount = menuRate * guests;
+                totalFood += amount;
+                totalGuests += guests;
+                funcNames.push(name);
+                if (!hallNames.includes(hall)) hallNames.push(hall);
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${idx + 1}</td>
+                    <td>
+                        <strong style="color: var(--primary-indigo); font-size: 1.05rem;">✨ ${name}</strong><br>
+                        <span style="font-size: 0.85rem; font-weight: 600; color: #92400e; background: #fef3c7; padding: 0.15rem 0.5rem; border-radius: 4px; display: inline-block; margin: 0.25rem 0;">📍 Space: ${hall}</span><br>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Includes Welcome Drinks, Starters, Live Counters, Main Course Buffet & Desserts.</span>
+                    </td>
+                    <td>₹${menuRate.toLocaleString('en-IN')}</td>
+                    <td>${guests} Pax</td>
+                    <td style="text-align: right; font-weight: 600;">₹${amount.toLocaleString('en-IN')}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Rooms Row
+            let nextSno = evRows.length + 1;
             const roomTotal = rooms * roomRate;
-            const subtotal = foodTotal + roomTotal;
+            if (rooms > 0) {
+                const trRoom = document.createElement('tr');
+                trRoom.innerHTML = `
+                    <td>${nextSno++}</td>
+                    <td>
+                        <strong>Guest Accommodation / Rooms Facility</strong><br>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);">Luxury AC guest rooms with attached bath, toiletries, and 24/7 room service support.</span>
+                    </td>
+                    <td>₹${roomRate.toLocaleString('en-IN')} / room</td>
+                    <td>${rooms} Rooms</td>
+                    <td style="text-align: right; font-weight: 600;">₹${roomTotal.toLocaleString('en-IN')}</td>
+                `;
+                tbody.appendChild(trRoom);
+            }
+
+            // Bridal suite row
+            const trFree = document.createElement('tr');
+            trFree.innerHTML = `
+                <td>${nextSno}</td>
+                <td>
+                    <strong>Bridal Suite & Valet Parking Facility</strong><br>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);">Complimentary AC bridal dressing room and valet attendants for guest parking.</span>
+                </td>
+                <td>Complimentary</td>
+                <td>1</td>
+                <td style="text-align: right; color: var(--success); font-weight: 700;">FREE</td>
+            `;
+            tbody.appendChild(trFree);
+
+            const subtotal = totalFood + roomTotal;
             const discountedSub = Math.max(0, subtotal - discount);
             const gst = Math.round(discountedSub * 0.18);
             const grandTotal = discountedSub + gst;
 
-            // Update Printable View
+            // Update Printable Header Summary
             document.getElementById('print-client-name').innerText = client;
-            document.getElementById('print-event-type').innerText = eventType;
             document.getElementById('print-event-date').innerText = eventDate;
-            document.getElementById('print-space').innerText = space;
-            document.getElementById('print-guests').innerText = guests;
-            if (document.getElementById('print-functions')) {
-                document.getElementById('print-functions').innerText = funcText;
-            }
-
-            document.getElementById('print-plate-rate').innerText = '₹' + plateRate.toLocaleString('en-IN');
-            document.getElementById('print-guest-qty').innerText = guests;
-            document.getElementById('print-food-total').innerText = '₹' + foodTotal.toLocaleString('en-IN');
-
-            if (document.getElementById('print-room-rate')) {
-                document.getElementById('print-room-rate').innerText = '₹' + roomRate.toLocaleString('en-IN');
-                document.getElementById('print-room-qty').innerText = rooms;
-                document.getElementById('print-room-total').innerText = '₹' + roomTotal.toLocaleString('en-IN');
-            }
+            document.getElementById('print-functions-summary').innerText = funcNames.join(', ') || '-';
+            document.getElementById('print-space-summary').innerText = hallNames.join(' + ') || '-';
+            document.getElementById('print-guests-summary').innerText = totalGuests;
 
             document.getElementById('print-subtotal').innerText = '₹' + subtotal.toLocaleString('en-IN');
             document.getElementById('print-discount').innerText = '- ₹' + discount.toLocaleString('en-IN');
@@ -2311,7 +2410,6 @@ The Lumora Bloom Team 🌿`;
             document.getElementById('print-grand-total').innerText = '₹' + grandTotal.toLocaleString('en-IN');
         }
 
-        /* Excel / CSV Import & Export */
         async function importExcelLeads() {
             const fileInput = document.getElementById('excel-file-input');
             if (!fileInput.files || !fileInput.files[0]) {
